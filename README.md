@@ -67,13 +67,9 @@ npm run dev
 
 ## Pagrindiniai Aplankai
 
-### `/config`
-
-Konfigūracijos aplankas skirtas duomenų bazės prisijungimui ir kitoms sistemos konfigūracijoms. Čia saugome MongoDB prisijungimo nustatymus ir kitus svarbius parametrus.
-
 ### `/controllers`
 
-Kontrolerių aplankas talpina visą verslo logiką. Čia aprašome funkcijas, kurios apdoroja užklausas, pvz.:
+Kontrolerių aplankas talpina visą logiką. Čia aprašome funkcijas, kurios apdoroja užklausas, pvz:
 
 - Įrankių pridėjimas/redagavimas
 - Rezervacijų valdymas
@@ -81,15 +77,14 @@ Kontrolerių aplankas talpina visą verslo logiką. Čia aprašome funkcijas, ku
 
 ### `/models`
 
-Modelių aplankas saugo duomenų bazės schemas. Mūsų atveju turėsime:
+Modelių aplankas saugo duomenų bazės schemas, pvz:
 
 - Tool modelį (įrankių informacijai)
-- Reservation modelį (rezervacijų duomenims)
 - User modelį (vartotojų informacijai)
 
 ### `/routes`
 
-Maršrutų aplankas apibrėžia API endpoints. Čia nurodome, kurie URL adresai į kokius kontrolerius nukreipia užklausas:
+Maršrutų aplankas apibrėžia API endpoints, pvz:
 
 - /api/tools
 - /api/reservations
@@ -97,7 +92,7 @@ Maršrutų aplankas apibrėžia API endpoints. Čia nurodome, kurie URL adresai 
 
 ### `/middleware`
 
-Tarpinės programinės įrangos aplankas skirtas funkcijoms, kurios apdoroja užklausas prieš pasiekiant kontrolerius:
+Tarpinės programinės įrangos aplankas skirtas funkcijoms, kurios apdoroja užklausas prieš pasiekiant kontrolerius, pvz:
 
 - Autentifikacijos tikrinimas
 - Užklausų validacija
