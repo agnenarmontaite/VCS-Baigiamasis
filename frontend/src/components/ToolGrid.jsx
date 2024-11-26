@@ -1,4 +1,15 @@
-function ToolGrid({ products }) {
+import { useEffect, useState } from "react";
+import ToolCard from "./ToolCard";
+
+function ToolGrid() {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:3000/products')
+      .then((res) => res.json())
+      .then((data) => setProducts(data.products || []))
+      .catch((err) => console.error(err));
+  }, []);
 
   return (
     <div className="most-popular-tools">
@@ -6,12 +17,7 @@ function ToolGrid({ products }) {
       <div className="tool-grid">
         <div className="tool-grid-inner">
           {products.map((item) => {
-            return (<div className="tool-grid-item" key={item._id}>
-              <img src={item.image}></img>
-              <p id="tool-grid-item-name">{item.name}</p>
-              <p id="tool-grid-item-description">{item.description}</p>
-              <p id="tool-grid-item-price">{item.price} € </p>
-            </div>)
+            return (<ToolCard item={item} key={item._id}/>)
           })}
         </div>
       </div>
