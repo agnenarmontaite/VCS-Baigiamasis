@@ -105,7 +105,7 @@ npm install
 ```
 
 2. ENV Failo parametrai:
-   PORT=3000
+   PORT=5000
    URI=mongodb_prisijungimo_adresas
 
 3. Paleisti projektą:
@@ -126,4 +126,3 @@ npm run dev
   - CORS
   - Dotenv
   - Nodemon
-  - Morgan

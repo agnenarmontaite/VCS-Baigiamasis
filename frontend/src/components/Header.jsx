@@ -2,18 +2,24 @@ import { Link } from 'react-router-dom'
 
 function Header() {
   return (
-    <header className="bg-white shadow">
-      <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <Link to="/" className="text-xl font-bold">Įrankių nuoma</Link>
-        <div className="flex gap-4">
-          <Link to="/" className="hover:text-blue-600">Pagrindinis</Link>
-          <Link to="/tool/:id" className="hover:text-blue-600">Įrankiai</Link>
-          <Link to="/admin" className="hover:text-blue-600">Valdymo Skydas</Link>
-          <Link to="/login" className="hover:text-blue-600">Prisijungti</Link>
-          <Link to="/signup" className="hover:text-blue-600">Registracija</Link>
-        </div>
-      </nav>
-    </header>
+    <header>
+        <nav>
+          <Link to="/" className="logo">Equipment Rental </Link>
+          <div className="nav-links">
+            <Link to="/">Home</Link>
+            <Link to="/tools">Tools</Link>
+            <Link to="#categories">Categories</Link>
+            <Link to="#about-us">About Us</Link>
+            <Link to="#contact">Contact</Link>
+          </div>
+          <div className="auth-links">
+            <Link to="/login"><i className="bi bi-person"></i>
+              Login</Link>
+            <Link to="/register"><i className="bi bi-person-add"></i>
+              Register</Link>
+          </div>
+        </nav>
+      </header>
   )
 }
 

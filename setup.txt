@@ -1,0 +1,2 @@
+1. pem_files isidekite savo ca.pem ir client filus.
+2. pakoreguokite .env file kaip nurodyta app.js
