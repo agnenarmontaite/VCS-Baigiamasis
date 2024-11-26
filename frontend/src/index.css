@@ -141,7 +141,7 @@ nav .auth-links :nth-child(2) {
     border: none;
     height: 96px;
     font-size: 20px;
-    line-height: 20px;
+    line-height: 30px;
 }
 
 .search-section-inputs input {
