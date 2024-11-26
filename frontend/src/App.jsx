@@ -7,6 +7,7 @@ import AdminPanel from './pages/AdminPanel';
 import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
 import Header from './components/Header';
+import Footer from './components/Footer';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
         </Routes>
       </div>
+      <Footer />
     </Router>
   );
 }
