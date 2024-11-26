@@ -1,9 +1,24 @@
+import { useState } from 'react';
+import ReservationForm from './ReservationForm';
+import ReservationConfirmation from './ReservationConfirmation';
+
 function BookingForm() {
+  const [reservation, setReservation] = useState(null);
+
+  const handleReservationSubmit = (formData) => {
+    console.log('Reservation submitted:', formData);
+    setReservation(formData);
+  };
   return (
-    <form className="space-y-4 bg-white p-6 rounded-lg shadow">
-      <h3 className="text-xl font-semibold">Rezervacijos duomenys</h3>
-      {/* Form fields will go here */}
-    </form>
+    <div className="p-6">
+      <div className="container mx-auto">
+        {!reservation ? (
+          <ReservationForm onSubmit={handleReservationSubmit} />
+        ) : (
+          <ReservationConfirmation reservation={reservation} />
+        )}
+      </div>
+    </div>
   );
 }
 
