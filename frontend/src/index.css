@@ -1,3 +1,242 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css");
+@import url('https://fonts.googleapis.com/css2?family=Krona+One&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Quicksand:wght@300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Krona+One&family=Lexend:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Quicksand:wght@300..700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* General reset */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans';
+    color: var(--default-text-color);
+}
+
+/* Variables  */
+
+:root {
+    --red500: #F44336;
+    --default-text-color: #000000;
+    --placeholder-color: #969393;
+}
+
+/* Links */
+
+a {
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--default-text-color);
+}
+
+input::placeholder {
+    color: var(--placeholder-color);
+}
+
+/* navigation */
+
+nav {
+    color: var(--default-text-color);
+    font-family: 'Lexend', sans-serif;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px 20px;
+    height: 100px;
+}
+
+nav .logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+nav .nav-links {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+nav .nav-links a {
+    padding: 14px 20px;
+    text-align: center;
+}
+
+nav .nav-links a:hover {
+    color: var(--default-text-color);
+    border: 1px solid var(--red500); border-radius: 25px;
+}
+
+nav .auth-links a {
+    padding: 14px 20px;
+    color: var(--red500);
+    font-weight: 500;
+}
+
+nav .auth-links a i {
+    margin-right: 4px;
+}
+
+nav .auth-links :nth-child(2) {
+    background-color: var(--red500);
+    border-radius: 25px;
+    color: white;
+    margin-left: 8px;
+}
+
+
+/* search-section */
+
+.search-section {
+    background-image: url(../src/assets/equipment-photo.jpg);
+    height: 60vh;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-section-inner {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.search-section-inner h1 {
+    font-size: 64px;
+    font-weight: 800;
+}
+
+.search-section-inner h3 {
+    font-size: 32px;
+}
+
+.header-red {
+    color: var(--red500)
+}
+
+.search-section-inputs {
+    width: 894px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.input-wrapper, .select-wrapper {
+    position: relative;
+    width: 45%;
+}
+
+
+.search-section-inputs input,
+.search-section-inputs select,
+.search-section-inputs .search-button-box {
+    border: none;
+    height: 96px;
+    font-size: 20px;
+    line-height: 20px;
+}
+
+.search-section-inputs input {
+    border-radius: 50px 0 0 50px;
+    width: 100%;
+    padding: 10px 40px 10px 50px;
+    border-right: 1px solid #e9e9e9;
+}
+
+.search-section-inputs .input-wrapper .bi-search,
+.search-section-inputs .select-wrapper .bi-tools {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: var(--placeholder-color);
+}
+
+.search-section-inputs select {
+    width: 100%;
+    padding: 10px 40px 10px 50px;
+    color: var(--placeholder-color);
+}
+
+.search-button-box {
+    background-color: white;
+    border-radius: 0px 50px 50px 0px;
+    width: 11%;
+}
+
+.search-section-inputs button {
+    border: none;
+    border-radius: 50%;
+    width: 55px;
+    height: 55px;
+    background-color: var(--red500);
+    color: white;
+    font-size: 20px;
+    top: 21px;
+    position: relative;
+}
+
+/* Top Categories */
+
+.top-categories {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.top-categories h2 {
+    font-size: 48px;
+    padding: 40px;
+}
+
+.top-categories-list {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+}
+
+.top-categories-list a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--placeholder-color);
+    border-radius: 55px;
+    font-size: 20px;
+    padding: 15px 20px 15px 10px;
+}
+
+.category-icon {
+    border-radius: 50%;
+    font-size: 24px;
+    padding: 10px;
+    box-sizing: content-box;
+}
+
+.drill-icon {
+    background-color: #FFEBEE;
+    color: var(--red500)
+}
+
+.cutting-icon {
+  background-color: #E8F5E9;
+  color: #4CAF50
+  }
+
+.plumbing-icon {
+    background-color: #F3E5F5;
+    color: #9C27B0;
+}
+
+.more-icon {
+    background-color: #FFF3E0;
+    color: #FF9800;
+}
