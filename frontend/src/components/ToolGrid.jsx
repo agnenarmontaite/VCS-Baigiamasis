@@ -14,10 +14,10 @@ function ToolGrid() {
   }, []);
 
   return (
-    <div className="most-popular-tools">
+    <div className="most-popular-tools flex flex-col items-center">
       <h2>Most popular tools</h2>
-      <div className="tool-grid">
-        <div className="tool-grid-inner">
+      <div className="tool-grid flex justify-center">
+        <div className="tool-grid-inner flex flex-wrap justify-around">
           {products.map((item) => (
             <ToolCard item={item} key={item._id} />
           ))}
