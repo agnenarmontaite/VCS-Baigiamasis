@@ -13,10 +13,11 @@ function ReservationForm({ onSubmit }) {
   });
 
   const toolTypes = {
-    'Sodo technika': ['Žoliapjovė', 'Trimeris', 'Gyvatvorių žirklės'],
-    'Statybinė technika': ['Gręžtuvas', 'Betono maišyklė', 'Vibroplokštė'],
-    'Medžio apdirbimo įrankiai': ['Oblius', 'Freza', 'Diskinis pjūklas'],
-    'Elektros įrankiai': ['Elektrinis pjūklas', 'Perforatorius', 'Šlifuoklis']
+    'Drilling equipment': ['Drill', 'Screwdriver', 'Hammer drill', 'Impact drill', 'Rotary hammer'],
+    'Cutting equipment':  ['Circular saw', 'Jigsaw', 'Reciprocating saw', 'Miter saw', 'Table saw'],
+    'Mounting equipment': ['Screwdriver', 'Impact wrench', 'Impact driver', 'Screw gun'],
+    'Plumbing equipment': ['Pipe wrench', 'Pipe cutter', 'Pipe bender', 'Pipe threader', 'Pipe reamer'],
+    'Cleaning equipment': ['Vacuum cleaner', 'Pressure washer', 'Carpet cleaner', 'Steam cleaner', 'Floor scrubber'],
   };
 
   const toolTypeOptions = Object.keys(toolTypes);
@@ -42,13 +43,13 @@ function ReservationForm({ onSubmit }) {
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-2xl font-bold mb-6 flex items-center">
-        <span className="mr-3 text-blue-600 text-xl">🛠️</span> Rezervacijos forma
+        <span className="mr-3 text-blue-600 text-xl">🛠️</span> Reservation form
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
 
         {/* Irankio tipo pasirinkimas */}
         <div>
-          <label className="block mb-2">Pasirinkite įrankio tipą</label>
+          <label className="block mb-2 font-bold">Select Category</label>
           <select 
             name="toolType"
             value={formData.toolType}
@@ -56,7 +57,7 @@ function ReservationForm({ onSubmit }) {
             className="w-full p-2 border rounded"
             required
           >
-            <option value="">Įrankio tipai</option>
+            <option value="">Categories</option>
             {toolTypeOptions.map(type => (
               <option key={type} value={type}>{type}</option>
             ))}
@@ -65,7 +66,7 @@ function ReservationForm({ onSubmit }) {
 
         {/* Irankio pasirinkimas */}
         <div>
-          <label className="block mb-2">Pasirinkite įrankį</label>
+          <label className="block mb-2 font-bold">Select Tool</label>
           <select 
             name="tool"
             value={formData.tool}
@@ -74,7 +75,7 @@ function ReservationForm({ onSubmit }) {
             required
             disabled={!formData.toolType}
           >
-            <option value="">Įrankiai</option>
+            <option value="">Tools</option>
             {formData.toolType && toolTypes[formData.toolType].map(tool => (
               <option key={tool} value={tool}>{tool}</option>
             ))}
@@ -83,7 +84,7 @@ function ReservationForm({ onSubmit }) {
 
         {/* Atsiemimo vietos pasirinkimas */}
         <div>
-          <label className="block mb-2">Pasirinkite atsiėmimo vietą</label>
+          <label className="block mb-2 font-bold">Pickup Location</label>
           <select 
             name="pickupLocation"
             value={formData.pickupLocation}
@@ -91,7 +92,7 @@ function ReservationForm({ onSubmit }) {
             className="w-full p-2 border rounded"
             required
           >
-            <option value="">Atsiėmimo vietos</option>
+            <option value="">Locations</option>
             {['Vilnius', 'Kaunas', 'Klaipėda', 'Šiauliai', 'Panevėžys'].map(location => (
               <option key={location} value={location}>{location}</option>
             ))}
@@ -101,7 +102,7 @@ function ReservationForm({ onSubmit }) {
         {/* Rezervacijos datos */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="block mb-2">Rezervacijos pradžia</label>
+            <label className="block mb-2 font-bold">Start Date</label>
             <input 
               type="date"
               name="startDate"
@@ -112,7 +113,7 @@ function ReservationForm({ onSubmit }) {
             />
           </div>
           <div>
-            <label className="block mb-2">Rezervacijos pabaiga</label>
+            <label className="block mb-2 font-bold">End Date</label>
             <input 
               type="date"
               name="endDate"
@@ -127,7 +128,7 @@ function ReservationForm({ onSubmit }) {
         {/* Kontaktiniai duomenys */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="block mb-2">Jūsų vardas ir pavardė</label>
+            <label className="block mb-2">Contact Name</label>
             <input 
               type="text"
               name="contactName"
@@ -138,7 +139,7 @@ function ReservationForm({ onSubmit }) {
             />
           </div>
           <div>
-            <label className="block mb-2">El. paštas</label>
+            <label className="block mb-2">Contact Email</label>
             <input 
               type="email"
               name="contactEmail"
@@ -151,7 +152,7 @@ function ReservationForm({ onSubmit }) {
         </div>
     
         <div>
-          <label className="block mb-2">Tel. numeris</label>
+          <label className="block mb-2">Contact Phone</label>
           <input 
             type="tel"
             name="contactPhone"
@@ -167,7 +168,7 @@ function ReservationForm({ onSubmit }) {
           type="submit" 
           className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700 transition duration-300"
         >
-          Rezervuoti
+          Make a reservation
         </button>
       </form>
     </div>
