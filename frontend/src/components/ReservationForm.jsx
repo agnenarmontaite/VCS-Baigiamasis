@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { PulseLoader } from 'react-spinners';
-import Datepicker from "react-tailwindcss-datepicker";
 
+import Datepicker from "react-tailwindcss-datepicker";
 
 function ReservationForm({ onSubmit }) {
   const [formData, setFormData] = useState({
@@ -18,13 +18,12 @@ function ReservationForm({ onSubmit }) {
 
   const [loading, setLoading] = useState(false);
 
-
   const toolTypes = {
     'Drilling equipment': ['Drill', 'Screwdriver', 'Hammer drill', 'Impact drill', 'Rotary hammer'],
     'Cutting equipment': ['Circular saw', 'Jigsaw', 'Reciprocating saw', 'Miter saw', 'Table saw'],
     'Mounting equipment': ['Screwdriver', 'Impact wrench', 'Impact driver', 'Screw gun'],
     'Plumbing equipment': ['Pipe wrench', 'Pipe cutter', 'Pipe bender', 'Pipe threader', 'Pipe reamer'],
-    'Cleaning equipment': ['Vacuum cleaner', 'Pressure washer', 'Carpet cleaner', 'Steam cleaner', 'Floor scrubber'],
+    'Cleaning equipment': ['Vacuum cleaner', 'Pressure washer', 'Carpet cleaner', 'Steam cleaner', 'Floor scrubber']
   };
 
   // manually budu neaktyviu rezervacijos datu nustatymas
@@ -45,7 +44,7 @@ function ReservationForm({ onSubmit }) {
   const handleChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
       ...(name === 'toolType' && { tool: '' })
@@ -60,12 +59,10 @@ function ReservationForm({ onSubmit }) {
     }));
   };
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-  
-    setTimeout(() => {
+      setTimeout(() => {
       setLoading(false);
       onSubmit({
         // nepatinka datos ir laiko atskirimas. reikia pakeisti

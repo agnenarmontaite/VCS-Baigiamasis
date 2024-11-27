@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import ToolCard from "./ToolCard";
+import { useEffect, useState } from 'react';
+import ToolCard from './ToolCard';
 
 function ToolGrid() {
   const [products, setProducts] = useState([]);
@@ -7,7 +7,9 @@ function ToolGrid() {
   useEffect(() => {
     fetch('http://localhost:3000/products')
       .then((res) => res.json())
-      .then((data) => setProducts(data.products || []))
+      .then((data) => {
+        setProducts(data.products || []);
+      })
       .catch((err) => console.error(err));
   }, []);
 
@@ -22,7 +24,7 @@ function ToolGrid() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default ToolGrid
+export default ToolGrid;
