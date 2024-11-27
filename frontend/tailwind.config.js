@@ -10,6 +10,12 @@ export default {
       colors: {
         red500: 'var(--red500)', 
       },
+      fontFamily: {
+        'plus-jakarta': ['"Plus Jakarta Sans"', 'sans-serif'],
+      },
+      screens: {
+        'xs': { 'max': '639px' },
+      },
     },
   },
   plugins: [],
