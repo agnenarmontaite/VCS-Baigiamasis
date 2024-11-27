@@ -15,7 +15,6 @@ function Home() {
 
   return (
     <main>
-      <h2 className="text-2xl font-bold mb-4"></h2>
       <Search />
       <TopCategories />
       <ToolGrid />
