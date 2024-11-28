@@ -4,8 +4,9 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import productRoutes from './api/routes/product.js';
-import orderRoutes from './api/routes/orders.js';
+import toolsRoute from "./api/routes/product.js"
+import reservationRoutes from './api/routes/reservations.js';
+
 import authRoutes from './api/routes/auth.js';
 dotenv.config();
 
@@ -44,7 +45,7 @@ app.use((req, res, next) => {
 
 //routes
 
-app.use('/tools', productRoutes)
+app.use('/tools', toolsRoutes)
 app.use('/reservations', reservationRoutes)
 
 
