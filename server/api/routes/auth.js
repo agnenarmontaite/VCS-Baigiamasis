@@ -8,6 +8,12 @@ const router = express.Router();
 
 router.post('/signup', async (req, res) => {
   try {
+    // Patikrinam ar yra pilnametis
+    const age = Math.floor((Date.now() - new Date(req.body.dateOfBirth)) / (365.25 * 24 * 60 * 60 * 1000));
+
+    if (age < 18) {
+      return res.status(400).json({ message: 'You must be at least 18 years old to register' });
+    }
     // Apsaugom slaptazodi
     const encryptPwd = await bcrypt.hash(req.body.password, 10);
 
