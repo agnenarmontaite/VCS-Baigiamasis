@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import productRoutes from './api/routes/products.js';
+import productRoutes from './api/routes/product.js';
 import reservationRoutes from './api/routes/reservations.js';
 
 import authRoutes from './api/routes/auth.js';
