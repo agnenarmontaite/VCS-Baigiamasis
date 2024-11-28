@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { PulseLoader } from 'react-spinners';
-
 import Datepicker from "react-tailwindcss-datepicker";
 
 function ReservationForm({ onSubmit }) {
@@ -235,7 +234,7 @@ function ReservationForm({ onSubmit }) {
         {/* Submit mygtukas */}
         <button
           type="submit"
-          className="w-full bg-red500 text-white p-4 rounded-lg hover:bg-red-600 transition duration-300 transform hover:shadow-lg flex items-center justify-center"
+          className="w-full  bg-black text-white p-4 rounded-lg hover:bg-red-600 transition duration-300 transform hover:shadow-lg flex items-center justify-center"
           disabled={loading}
         >
           {loading ? (
