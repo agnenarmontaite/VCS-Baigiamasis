@@ -14,10 +14,16 @@ function Home() {
   const [isSearchActive, setIsSearchActive] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:3000/products')
-      .then((res) => res.json())
-      .then((data) => setProducts(data.products || []))
-      .catch((err) => console.error(err));
+    fetch('http://localhost:3000/tools')
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        setProducts(data.tools);
+      })
+      .catch((error) => {
+        console.error('Fetch error:', error);
+      });
   }, []);
 
   const handleSearch = (criteria) => {
@@ -31,7 +37,6 @@ function Home() {
     setIsSearchActive(true);
     setSearchCriteria(criteria);
 
-    // Patikrinam ar teisingai gauna duomenis
     console.log('Search Input:', criteria);
 
     const filteredProducts = products.filter((product) => {
@@ -42,7 +47,6 @@ function Home() {
       return matchesSearch && matchesCategory;
     });
 
-    // Prasitestuojam ar veikia
     console.log('Filtered Results:', filteredProducts);
     console.log('Number of matches:', filteredProducts.length);
 
