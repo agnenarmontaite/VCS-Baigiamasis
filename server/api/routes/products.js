@@ -39,7 +39,7 @@ router.post('/', auth, adminAuth, (req, res, next) => {
     .then((result) => {
       console.log(result);
       res.status(201).json({
-        message: 'Created product succesfully',
+        message: 'Created product successfully',
         createdProduct: {
           name: result.name,
           price: result.price,

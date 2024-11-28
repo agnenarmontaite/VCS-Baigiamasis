@@ -5,9 +5,11 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import productRoutes from './api/routes/products.js';
+import reservationRoutes from './api/routes/reservations.js';
 import orderRoutes from './api/routes/orders.js';
 import authRoutes from './api/routes/auth.js';
 dotenv.config();
+
 
 const app = express();
 
@@ -42,8 +44,10 @@ app.use((req, res, next) => {
 });
 
 //routes
-app.use('/products', productRoutes);
-app.use('/orders', orderRoutes);
+
+app.use('/products', productRoutes)
+app.use('/reservations', reservationRoutes)
+
 
 app.use((req, res, next) => {
   const error = new Error('Not found');
