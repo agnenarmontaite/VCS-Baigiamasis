@@ -28,7 +28,7 @@ await mongoose
 //middleware
 app.use(morgan('dev'));
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use('/auth', authRoutes);
 
@@ -44,10 +44,8 @@ app.use((req, res, next) => {
 });
 
 //routes
-
-app.use('/products', productRoutes)
-app.use('/reservations', reservationRoutes)
-
+app.use('/tools', productRoutes);
+app.use('/reservations', orderRoutes);
 
 app.use((req, res, next) => {
   const error = new Error('Not found');
