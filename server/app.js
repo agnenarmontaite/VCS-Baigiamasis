@@ -9,6 +9,7 @@ import orderRoutes from './api/routes/orders.js';
 import authRoutes from './api/routes/auth.js';
 dotenv.config();
 
+
 const app = express();
 
 //mongoose DB connection
@@ -42,8 +43,10 @@ app.use((req, res, next) => {
 });
 
 //routes
-app.use('/tools', productRoutes);
-app.use('/orders', orderRoutes);
+
+app.use('/tools', productRoutes)
+app.use('/reservations', reservationRoutes)
+
 
 app.use((req, res, next) => {
   const error = new Error('Not found');
