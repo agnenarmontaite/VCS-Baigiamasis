@@ -15,6 +15,7 @@ router.get('/', (req, res, next) => {
         products: docs.map((doc) => {
           return {
             _id: doc._id,
+            toolType: doc.toolType, //itraukiau toolType
             name: doc.description.nameRetail,
             price: doc.description.basePrice,
             description: doc.description.details,
@@ -30,9 +31,19 @@ router.get('/', (req, res, next) => {
 router.post('/', auth, adminAuth, (req, res, next) => {
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
-    name: req.body.name,
-    price: req.body.price,
-    description: req.body.description
+    id: req.body.id,
+    toolType: req.body.toolType, 
+    description: {
+      nameRetail: req.body.name,
+      basePrice: req.body.price,
+      details: req.body.description,
+      imageURIs: req.body.imageURIs || []
+    },
+    isAvailable: req.body.isAvailable || 'yes',
+    isVisible: req.body.isVisible || 'yes',
+    isDraft: req.body.isDraft || 'no',
+    reservations: [],
+    reviews: []
   });
   product
     .save()
@@ -41,13 +52,15 @@ router.post('/', auth, adminAuth, (req, res, next) => {
       res.status(201).json({
         message: 'Created product successfully',
         createdProduct: {
-          name: result.name,
-          price: result.price,
+          name: result.description.nameRetail,
+          price: result.description.basePrice,
           _id: result._id,
-          description: result.description,
+          toolType: result.toolType,
+          description: result.description.details,
+          images: result.description.imageURIs,
           request: {
             type: 'GET',
-            url: 'http://localhost:3000/products' + result._id
+            url: 'http://localhost:3000/products/' + result._id
           }
         }
       });
