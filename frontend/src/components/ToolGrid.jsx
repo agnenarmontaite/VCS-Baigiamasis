@@ -5,7 +5,7 @@ function ToolGrid() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:3000/products')
+    fetch('http://localhost:3000/tools')
       .then((res) => res.json())
       .then((data) => {
         setProducts(data.products || []);
