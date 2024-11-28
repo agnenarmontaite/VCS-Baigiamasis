@@ -24,7 +24,6 @@ router.get('/', (req, res, next) => {
                     request: {
                         type: 'GET',
                         url: `http://localhost:${port}/products/${doc._id}`
-                        
                     }
                 }
             })
@@ -65,7 +64,6 @@ router.post('/', (req, res, next) => {
                 }
             }
         })
-    
     })
     .catch(err => {
         console.log(err)
