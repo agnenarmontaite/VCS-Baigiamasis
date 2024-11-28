@@ -45,7 +45,7 @@ app.use((req, res, next) => {
 
 //routes
 
-app.use('/products', productRoutes)
+app.use('/tools', productRoutes)
 app.use('/reservations', reservationRoutes)
 
 
