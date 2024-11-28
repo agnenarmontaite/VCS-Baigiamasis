@@ -23,6 +23,9 @@ const userSchema = mongoose.Schema({
   // Turimi irankiai
   rentedTools: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tools' }],
   // Istorija
+
+  reservations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Reservation' }],
+  //Turimos rezervacijos
   rentalHistory: [
     {
       tool: { type: mongoose.Schema.Types.ObjectId, ref: 'Tools' },
@@ -32,9 +35,12 @@ const userSchema = mongoose.Schema({
   ]
 });
 
+
 // Ar pilnametis
 userSchema.virtual('age').get(function () {
   return Math.floor((Date.now() - this.dateOfBirth) / (365.25 * 24 * 60 * 60 * 1000));
 });
 
+
 export default mongoose.model('User', userSchema);
+
