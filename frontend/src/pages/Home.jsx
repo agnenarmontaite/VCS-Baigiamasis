@@ -15,9 +15,15 @@ function Home() {
 
   useEffect(() => {
     fetch('http://localhost:3000/tools')
-      .then((res) => res.json())
-      .then((data) => setProducts(data.tools || []))
-      .catch((err) => console.error(err));
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        setProducts(data.tools);
+      })
+      .catch((error) => {
+        console.error('Fetch error:', error);
+      });
   }, []);
 
   const handleSearch = (criteria) => {

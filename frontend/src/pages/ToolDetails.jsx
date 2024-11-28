@@ -7,15 +7,15 @@ function ToolDetails() {
   const [quantity, setQuantity] = useState(1);
   const { id } = useParams();
 
-    useEffect(() => {
-      fetch('http://localhost:3000/tools/' + id)
-        .then((res) => res.json())
-        .then((data) => {
-          setTool(data.tools || {});
-          setTotalPrice(data.tools.description.basePrice || "")
-        })
-        .catch((err) => console.error(err));
-    }, []);
+  useEffect(() => {
+    fetch('http://localhost:3000/tools/' + id)
+      .then((res) => res.json())
+      .then((data) => {
+        setTool(data.product || {});
+        setTotalPrice(data.product.description.basePrice || '');
+      })
+      .catch((err) => console.error(err));
+  }, [id]);
 
   function decreaseQuantity() {
     if (quantity > 1) {
