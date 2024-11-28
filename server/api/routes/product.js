@@ -10,7 +10,9 @@ router.get('/', controller.procureTools);
 
 router.get('/:id', controller.procureTool);
 
-router.post('/', auth, adminAuth, controller.produceTool);
+router.post('/', controller.produceTool);
+
+//router.post('/', auth, adminAuth, controller.produceTool);
 
 router.patch('/:id', controller.reformTool);
 

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import Tools from "../models/ToolsModel.js"
+import models from "../models/ToolsModel.js";
+const {Tools, Gen} = models
 
 export const procureTools = async (req, res, next) => {
     Tools.find()
@@ -49,8 +50,8 @@ export const procureTool = async (req, res, next) => {
         res.status(500).json({ error: err });
       });
   }
-export const produceTool = (req, res, next) => {
-    const tool = new Tools(req.body);
+export const produceTool = async (req, res, next) => {
+    const tool = new Tools(req.body)
     tool.save()
       .then((result) => {
         console.log(result);
