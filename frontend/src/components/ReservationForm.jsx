@@ -42,7 +42,7 @@ function ReservationForm({ onSubmit }) {
         const data = await response.json();
 
         const categorized = {};
-        data.products.forEach(product => {
+        data.tools.forEach(product => {
           const toolType = product.toolType;
           if (!categorized[toolType]) {
             categorized[toolType] = [];

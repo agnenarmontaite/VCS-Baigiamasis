@@ -9,7 +9,7 @@ function Home() {
   useEffect(() => {
     fetch('http://localhost:3000/tools')
       .then((res) => res.json())
-      .then((data) => setProducts(data.products || []))
+      .then((data) => setProducts(data.tolls || []))
       .catch((err) => console.error(err));
   }, []);
 

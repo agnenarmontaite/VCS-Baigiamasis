@@ -8,7 +8,7 @@ function ToolGrid() {
     fetch('http://localhost:3000/tools')
       .then((res) => res.json())
       .then((data) => {
-        setProducts(data.products || []);
+        setProducts(data.tools || []);
       })
       .catch((err) => console.error(err));
   }, []);

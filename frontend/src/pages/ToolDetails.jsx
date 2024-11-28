@@ -12,8 +12,8 @@ function ToolDetails() {
       fetch('http://localhost:3000/tools/' + id)
         .then((res) => res.json())
         .then((data) => {
-          setTool(data.product || {});
-          setTotalPrice(data.product.description.basePrice || "")
+          setTool(data.tools || {});
+          setTotalPrice(data.tools.description.basePrice || "")
         })
         .catch((err) => console.error(err));
     }, []);
