@@ -49,6 +49,7 @@ const Tools = mongoose.model('Tools', toolsSchema);
 const Gen = mongoose.model('Gen', generatorDetails);
 
 export default { Tools, Gen };
+
 /*
 const perforatorDetails = new Schema({
     productType: {type: String, required: true},

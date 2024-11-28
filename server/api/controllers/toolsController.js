@@ -3,6 +3,7 @@ import models from '../models/product.js';
 
 const { Tools, Gen } = models;
 
+
 export const procureTools = async (req, res, next) => {
   Tools.find()
     .exec()
