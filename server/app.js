@@ -4,9 +4,8 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import productRoutes from './api/routes/products.js';
-import reservationRoutes from './api/routes/reservations.js';
-
+import productRoutes from './api/routes/product.js';
+import orderRoutes from './api/routes/orders.js';
 import authRoutes from './api/routes/auth.js';
 dotenv.config();
 
@@ -28,7 +27,7 @@ await mongoose
 //middleware
 app.use(morgan('dev'));
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use('/auth', authRoutes);
 
@@ -45,7 +44,7 @@ app.use((req, res, next) => {
 
 //routes
 
-app.use('/products', productRoutes)
+app.use('/tools', productRoutes)
 app.use('/reservations', reservationRoutes)
 
 
