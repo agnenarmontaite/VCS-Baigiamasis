@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { PulseLoader } from 'react-spinners';
-
 import Datepicker from "react-tailwindcss-datepicker";
 
 function ReservationForm({ onSubmit }) {
@@ -14,7 +13,7 @@ function ReservationForm({ onSubmit }) {
     contactEmail: '',
     contactPhone: ''
   });
- 
+
 
   const [loading, setLoading] = useState(false);
 
@@ -62,13 +61,14 @@ function ReservationForm({ onSubmit }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
+
       setTimeout(() => {
       setLoading(false);
       onSubmit({
         // nepatinka datos ir laiko atskirimas. reikia pakeisti
         ...formData,
-        startDate: formData.startDate ? formData.startDate.toISOString().replace('T', ' / ').split('.')[0] : null,
-        endDate: formData.endDate ? formData.endDate.toISOString().replace('T', ' / ').split('.')[0] : null
+        startDate: formData.startDate ? formData.startDate.toISOString().replace('T', ' ').split('.')[0] : null,
+        endDate: formData.endDate ? formData.endDate.toISOString().replace('T', ' ').split('.')[0] : null
       });
     }, 4000);
   };
@@ -130,13 +130,70 @@ function ReservationForm({ onSubmit }) {
         </div>
         {/* Datepickeris. Neiseina pakeisti backgroundo is dark i white. */}
         <div className="grid md:grid-cols-1 gap-3">
+          <p className='font-bold'>Reservation date</p>
           <Datepicker
             primaryColor={"red"}
-            value={{ startDate: formData.startDate, endDate: formData.endDate }} 
+            value={{ startDate: formData.startDate, endDate: formData.endDate }}
             onChange={handleDateChange}
             showShortcuts={true}
+            placeholder="Select your date"
+            showFooter={true}
             disabledDates={disabledDates}
-        /> 
+            className={""}
+            configs={{
+              shortcuts: {
+                today: {
+                  text: "Today",
+                  period: {
+                    start: new Date(new Date().setDate(new Date().getDate() + 1)),
+                    end: new Date(new Date().setDate(new Date().getDate() + 1))
+                  }
+                },
+                tomorrow: {
+                  text: "Tomorrow",
+                  period: {
+                    start: new Date(new Date().setDate(new Date().getDate() + 1)),
+                    end: new Date(new Date().setDate(new Date().getDate() + 1))
+                  }
+                },
+                next3Days: {
+                  text: "Next 3 days",
+                  period: {
+                    start: new Date(new Date().setDate(new Date().getDate() + 1)),
+                    end: new Date(new Date().setDate(new Date().getDate() + 3))
+                  }
+                },
+                next5Days: {
+                  text: "Next 5 days",
+                  period: {
+                    start: new Date(new Date().setDate(new Date().getDate() + 1)),
+                    end: new Date(new Date().setDate(new Date().getDate() + 5))
+                  }
+                },
+                next7Days: {
+                  text: "Next 7 days",
+                  period: {
+                    start: new Date(new Date().setDate(new Date().getDate() + 1)),
+                    end: new Date(new Date().setDate(new Date().getDate() + 7))
+                  }
+                },
+                next14Days: {
+                  text: "Next 14 days",
+                  period: {
+                    start: new Date(new Date().setDate(new Date().getDate() + 1)),
+                    end: new Date(new Date().setDate(new Date().getDate() + 14))
+                  }
+                },
+                next30days: {
+                  text: "Next 30 days",
+                  period: {
+                    start: new Date(new Date().setDate(new Date().getDate() + 1)),
+                    end: new Date(new Date().setDate(new Date().getDate() + 30))
+                  }
+                }
+              }
+            }}
+          />
         </div>
         {/* Kontaktiniai duomenys */}
         <div className="grid md:grid-cols-2 gap-3">
@@ -177,7 +234,7 @@ function ReservationForm({ onSubmit }) {
         {/* Submit mygtukas */}
         <button
           type="submit"
-          className="w-full bg-red500 text-white p-4 rounded-lg hover:bg-red-600 transition duration-300 transform hover:shadow-lg flex items-center justify-center"
+          className="w-full  bg-black text-white p-4 rounded-lg hover:bg-red-600 transition duration-300 transform hover:shadow-lg flex items-center justify-center"
           disabled={loading}
         >
           {loading ? (
