@@ -1,8 +1,5 @@
 import mongoose from 'mongoose';
-import models from '../models/product.js';
-
-const { Tools, Gen } = models;
-
+import Tools from '../models/product.js';
 
 export const procureTools = async (req, res, next) => {
   Tools.find()
@@ -53,7 +50,7 @@ export const procureTool = async (req, res, next) => {
     });
 };
 export const produceTool = async (req, res, next) => {
-  const tool = new Tools(req.body);
+  const tool = new Tools(req.tools);
   tool
     .save()
     .then((result) => {
@@ -77,16 +74,12 @@ export const produceTool = async (req, res, next) => {
     });
 };
 export const reformTool = async (req, res, next) => {
-  const { id } = req.params;
+  const id = req.params.id;
   if (!mongoose.Types.ObjectId.isValid) {
     return res.status(400).json({ error: 'No such tool was found' });
   }
-  let updateOps = {};
-  console.log(req.body);
-  for (const ops of req.body) {
-    updateOps[ops.propName] = ops.value;
-  }
-  Tools.updateOne({ _id: id }, { $set: updateOps })
+  const updateOps = req.body
+  Tools.findOneAndUpdate({_id: id}, updateOps, {new: true})
     .exec()
     .then((result) => {
       res.status(200).json({

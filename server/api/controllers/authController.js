@@ -1,5 +1,7 @@
 import mongoose from 'mongoose'
-import User from '../models/User'
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
+import User from '../models/User.js'
 
 export const userSignup = async (req, res) => {
     try {
