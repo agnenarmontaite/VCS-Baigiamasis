@@ -1,9 +1,9 @@
-import SignupForm from '../../components/auth/SignupForm';
+import SignupForm from './auth/SignupForm';
 
 const Signup = () => {
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Registracija</h2>
+    <div className="container mx-auto px-4 py-8">
+      <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
       <SignupForm />
     </div>
   );
