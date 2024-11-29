@@ -9,9 +9,14 @@ import DemolitionHammersLogo from '../assets/atskelimo-plaktukas.svg?react'
 import ChainSawsLogo from '../assets/grandininis-pjuklas.svg?react'
 import ConstructionVacuumLogo from '../assets/statybinis-dulkiu-siurblys.svg?react'
 import ToolGrid from '../components/ToolGrid';
+import { useState } from 'react'
 
 
 const Categories = () => {
+    const [searchCriteria, setSearchCriteria] = useState({
+        searchText: '',
+        category: ''
+      });
 
     const categories = [
         { key: "Generatoriai", title: "Generators", icon: <GeneratorLogo className="w-[100%] h-[100%]"/> },
@@ -26,18 +31,22 @@ const Categories = () => {
         { key: "Statybinis dulkių siurblys", title: "Construction Vacuums", icon: <ConstructionVacuumLogo className="w-[100%] h-[100%]" /> },
     ]
 
+    const handleSearch = (category) => {
+        setSearchCriteria({...searchCriteria, category})
+    }
+
     return (
         <div>
-            <div className='flex justify-center'>
+            <div className='flex flex-col items-center'>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 w-[80%] max-w-[1300px] mt-3">
                     {categories.map((item) => (
-                        <div key={item.key} className='text-center border border-gray-200 flex flex-col items-center w-[140px] lg:w-[155px] xl:w-[200px]'>
+                        <div key={item.key} onClick={() => handleSearch(item.key)} className='text-center border border-gray-200 flex flex-col items-center w-[140px] lg:w-[155px] xl:w-[200px]'>
                             <span className="text-gray-500 w-[40px] sm:w-[80px] md:w-[120px] lg:w-[150px] lg:h-[150px]">{item.icon}</span>
                             <h3 className="text-[14px] lg:text-[20px]">{item.title}</h3>
                         </div>
                     ))}
                 </div>
-                {/* <ToolGrid isSearchResult={false} /> */}
+                <ToolGrid searchCriteria={searchCriteria}/>
             </div>
         </div>
     )
