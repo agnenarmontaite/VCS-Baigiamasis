@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 
 import Reservation from '../models/reservations.js';
-import Product from '../models/product.js';
+import Tools from '../models/product.js';
 import User from '../models/User.js';
 
 import auth from '../middleware/auth.js';
@@ -62,7 +62,7 @@ router.post('/', auth, async (req, res) => {
 
   try {
     // Patikrina ar produktas egzistuoja
-    const product = await Product.Tools.findById(productId);
+    const product = await Tools.findById(productId);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
@@ -91,7 +91,7 @@ router.post('/', auth, async (req, res) => {
     // Iraso rezervacija i duomenu baze
     const savedReservation = await reservation.save();
 
-    await Product.Tools.findByIdAndUpdate(
+    await Tools.findByIdAndUpdate(
       productId,
       { 
         $push: { 
