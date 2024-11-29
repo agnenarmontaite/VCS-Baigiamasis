@@ -43,8 +43,8 @@ router.get('/', auth, async (req, res) => {
 // POST sukuria nauja rezervacija (naudojant auth middleware)
 router.post('/', auth, async (req, res) => {
   // Is request paimamas productId, quantity ir dateRange
+  const { userId } = req.userData;
   const { productId, quantity, dateRange } = req.body;
-  const { userId } = req.body;
 
   // Patikrina ar dateRange teisingai ivestas
   if (!dateRange || !dateRange.from || !dateRange.to) {
@@ -62,26 +62,51 @@ router.post('/', auth, async (req, res) => {
 
   try {
     // Patikrina ar produktas egzistuoja
-    const product = await Product.findById(productId);
+    const product = await Product.Tools.findById(productId);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
+
+    console.log('Received dateRange:', dateRange);
+    console.log('Creating reservation with data:', {
+      productId,
+      quantity,
+      userId,
+      dateRange
+    });
 
     // Sukuria nauja rezervacija
     const reservation = new Reservation({
       _id: new mongoose.Types.ObjectId(),
       product: productId,
       quantity: quantity || 1, // Jei nera kiekio, naudoja 1 kaip default
-      userId: userId,
+      userId: userId, // Autentifikacijos metu issaugotas userId
       dateRange: {
-        from: new Date(),
-        to: new Date()
+        from: dateRange.from,
+        to: dateRange.to
       }
     });
-    console.log(reservation);
+    console.log('Created reservation object:', reservation);
 
     // Iraso rezervacija i duomenu baze
     const savedReservation = await reservation.save();
+
+    await Product.Tools.findByIdAndUpdate(
+      productId,
+      { 
+        $push: { 
+          reservations: {
+            userId: userId,
+            reservationId: savedReservation._id,
+            dateRange: {
+              startDate: dateRange.from,
+              endDate: dateRange.to
+            }
+          }, // Push nauja irankio rezervacija tools sekcijoje
+        }
+      },
+      { new: true } // Grazina atnaujinta user objekta
+    );
 
     // Prideda rezervacijos id i userio rezervaciju sarasa
     await User.findByIdAndUpdate(
@@ -110,7 +135,10 @@ router.post('/', auth, async (req, res) => {
 router.get('/:reservationId', auth, async (req, res) => {
   try {
     // Suranda rezervacija pagal id
-    const reservation = await Reservation.findById(req.params.reservationId).exec();
+    const reservation = await Reservation.findOne({
+      _id: req.params.reservationId,
+      userId: req.userData.userId
+    }).exec();
     if (!reservation) {
       return res.status(404).json({ message: 'Reservation not found' });
     }
