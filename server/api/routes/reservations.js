@@ -61,8 +61,6 @@ router.post('/', auth, async (req, res) => {
   // }
 
   try {
-    
-    console.log('userId:', userId)
     // Patikrina ar produktas egzistuoja
     const product = await Product.Tools.findById(productId);
     if (!product) {
@@ -82,7 +80,7 @@ router.post('/', auth, async (req, res) => {
       _id: new mongoose.Types.ObjectId(),
       product: productId,
       quantity: quantity || 1, // Jei nera kiekio, naudoja 1 kaip default
-      userId: userId, // Autenticacijos metu issaugotas userId
+      userId: userId, // Autentifikacijos metu issaugotas userId
       dateRange: {
         from: dateRange.from,
         to: dateRange.to
@@ -93,25 +91,22 @@ router.post('/', auth, async (req, res) => {
     // Iraso rezervacija i duomenu baze
     const savedReservation = await reservation.save();
 
-
- //>>Issaugo irankio rezervacijas
- await Product.Tools.findByIdAndUpdate(
-  productId,
-  { 
-    $push: { 
-      reservations: {
-        userId: userId,
-        reservationId: savedReservation._id,
-        dateRange: {
-          startDate: dateRange.from,
-          endDate: dateRange.to
+    await Product.Tools.findByIdAndUpdate(
+      productId,
+      { 
+        $push: { 
+          reservations: {
+            userId: userId,
+            reservationId: savedReservation._id,
+            dateRange: {
+              startDate: dateRange.from,
+              endDate: dateRange.to
+            }
+          }, // Push nauja irankio rezervacija tools sekcijoje
         }
-      }, // Push nauja irankio rezervacija tools sekcijoje
-    }
-  },
-  { new: true } // Grazina atnaujinta user objekta
-);
-//<<
+      },
+      { new: true } // Grazina atnaujinta user objekta
+    );
 
     // Prideda rezervacijos id i userio rezervaciju sarasa
     await User.findByIdAndUpdate(
@@ -184,5 +179,3 @@ router.delete('/:reservationId', auth, async (req, res) => {
 });
 
 export default router;
-
-

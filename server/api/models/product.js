@@ -12,7 +12,6 @@ const toolsSchema = new Schema({
   isAvailable: { type: Boolean, required: true },
   isVisible: { type: Boolean, default: true },
   isDraft: { type: Boolean, required: true },
-  //>>irankio rezervacijos
   reservation: [{
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     reservationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Reservation', required: true },
@@ -22,7 +21,6 @@ const toolsSchema = new Schema({
 
     }
   }],
-   //<<irankio rezervacijos
   reviews: [{ type: String, default: '' }]
 });
 
