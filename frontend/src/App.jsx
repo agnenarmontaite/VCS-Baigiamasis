@@ -11,6 +11,7 @@ import Footer from './components/Footer';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Tools from './pages/Tools';
+import Categories from './pages/Categories';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/tools" element={<Tools />} />
           <Route path="/tools/:id" element={<ToolDetails />} />
+          <Route path="/categories" element={<Categories />} />
           <Route path="/booking/:id" element={<Booking />} />
           <Route path="/confirmation" element={<Confirmation />} />
           <Route path="/admin" element={<AdminPanel />} />
