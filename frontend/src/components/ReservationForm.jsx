@@ -5,6 +5,8 @@ import { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
+
+
 function ReservationForm({ onSubmit }) {
   const { user } = useContext(AuthContext);
 
@@ -22,12 +24,15 @@ function ReservationForm({ onSubmit }) {
     contactEmail: '',
     contactPhone: ''
   });
+  console.log('toolType', formData.toolType);
 
+ 
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState({});
   const [tools, setTools] = useState([]);
   const [fetchError, setFetchError] = useState(null);
 
+  
   const disabledDates = [
     {
       startDate: new Date(2024, 11, 1), // December 1, 2024
@@ -41,6 +46,8 @@ function ReservationForm({ onSubmit }) {
 
   const pickupLocations = ['Vilnius', 'Kaunas', 'Klaipėda', 'Šiauliai', 'Panevėžys'];
 
+
+  
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -57,7 +64,10 @@ function ReservationForm({ onSubmit }) {
           if (!categorized[toolType]) {
             categorized[toolType] = [];
           }
-          categorized[toolType].push(product);
+          categorized[toolType].push({
+            _id: product._id,
+            name: product.name, 
+          });
         });
 
         setCategories(categorized);
@@ -69,57 +79,74 @@ function ReservationForm({ onSubmit }) {
 
     fetchProducts();
   }, []);
-
   const handleChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-
-    // jeigu pakeiciam toolType, resetinasi tools
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-      ...(name === 'toolType' && { tool: '' })
-    }));
-
-    // jei toolType pakeiciam, atnaujina tools lista
-    if (name === 'toolType') {
-      setTools(categories[value] || []);
+  
+    if (name === 'tool') {
+      const selectedTool = tools.find((tool) => tool._id === value);
+      setFormData((prev) => ({
+        ...prev,
+        tool: value, // tool ID
+        toolName: selectedTool ? selectedTool.name : '', 
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+        ...(name === 'toolType' && { tool: '', toolName: '' }), // Atnaujina tool ir toolName kai pasikeicia toolType
+      }));
+  
+      // Atnaujina tools state kai pasikeicia toolType
+      if (name === 'toolType') {
+        setTools(categories[value] || []);
+      }
     }
   };
 
+  
   const handleDateChange = (newValue) => {
+    console.log('Pasirinktos startDate:', newValue.startDate);
+    console.log('Pasirinktos endDate:', newValue.endDate);
+    
     setFormData((prev) => ({
       ...prev,
       startDate: newValue.startDate,
-      endDate: newValue.endDate
+      endDate: newValue.endDate,
     }));
   };
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    const token = localStorage.getItem('token');
-    console.log('Token:', token);
+    // Pasiimam token is localstorage ir tikrinam ar vartotojas authentifikuotas
+    const token = localStorage.getItem('token'); 
 
+    if (!token) {
+      alert('You must be logged in to make a reservation.');
+      setLoading(false);
+      return;
+    }
+
+  
     const payload = {
-      productId: formData.tool,
+      productId: formData.tool, 
+      toolType: formData.toolType,
+      tool: formData.toolName, 
       dateRange: {
-        from: formData.startDate,
-        to: formData.endDate
+        from: formData.startDate ? formData.startDate.toISOString() : null,
+        to: formData.endDate ? formData.endDate.toISOString() : null
       },
-      quantity: 1,
       pickupLocation: formData.pickupLocation,
       contactName: formData.contactName,
       contactEmail: formData.contactEmail,
       contactPhone: formData.contactPhone
     };
 
-    console.log('Request Headers:', {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
-    console.log('Request Payload:', payload);
+    console.log('Form Data:', formData); 
+    console.log('Payload:', payload);     
 
     try {
       const response = await fetch('http://localhost:3000/reservations', {
@@ -130,7 +157,7 @@ function ReservationForm({ onSubmit }) {
         },
         body: JSON.stringify(payload)
       });
-
+    
       if (response.ok) {
         const result = await response.json();
         onSubmit(result);
@@ -154,7 +181,7 @@ function ReservationForm({ onSubmit }) {
         <p className="text-red-500">{fetchError}</p>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Irankio tipo pasirinkimas */}
+          {/* Select Category */}
           <div>
             <label className="block mb-1 font-bold text-black">Select Category</label>
             <select name="toolType" value={formData.toolType} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required>
@@ -169,7 +196,7 @@ function ReservationForm({ onSubmit }) {
             </select>
           </div>
 
-          {/* Irankio pasirinkimas */}
+          {/* Select Tool */}
           <div>
             <label className="block mb-1 font-bold text-black">Select Tool</label>
             <select
@@ -191,7 +218,7 @@ function ReservationForm({ onSubmit }) {
             </select>
           </div>
 
-          {/* Atsiemimo vietos pasirinkimas */}
+          {/* Pickup Location */}
           <div>
             <label className="block mb-1 font-bold text-black">Pickup Location</label>
             <select name="pickupLocation" value={formData.pickupLocation} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required>
@@ -206,7 +233,7 @@ function ReservationForm({ onSubmit }) {
             </select>
           </div>
 
-          {/* Datepickeris */}
+          {/* DatePicker */}
           <div className="grid md:grid-cols-1 gap-3">
             <p className="font-bold">Reservation date</p>
             <Datepicker
@@ -223,8 +250,8 @@ function ReservationForm({ onSubmit }) {
                   today: {
                     text: 'Today',
                     period: {
-                      start: new Date(new Date().setDate(new Date().getDate() + 0)),
-                      end: new Date(new Date().setDate(new Date().getDate() + 0))
+                      start: new Date(),
+                      end: new Date()
                     }
                   },
                   tomorrow: {
@@ -237,35 +264,35 @@ function ReservationForm({ onSubmit }) {
                   next3Days: {
                     text: 'Next 3 days',
                     period: {
-                      start: new Date(new Date().setDate(new Date().getDate() + 1)),
+                      start: new Date(),
                       end: new Date(new Date().setDate(new Date().getDate() + 3))
                     }
                   },
                   next5Days: {
                     text: 'Next 5 days',
                     period: {
-                      start: new Date(new Date().setDate(new Date().getDate() + 1)),
+                      start: new Date(),
                       end: new Date(new Date().setDate(new Date().getDate() + 5))
                     }
                   },
                   next7Days: {
                     text: 'Next 7 days',
                     period: {
-                      start: new Date(new Date().setDate(new Date().getDate() + 1)),
+                      start: new Date(),
                       end: new Date(new Date().setDate(new Date().getDate() + 7))
                     }
                   },
                   next14Days: {
                     text: 'Next 14 days',
                     period: {
-                      start: new Date(new Date().setDate(new Date().getDate() + 1)),
+                      start: new Date(),
                       end: new Date(new Date().setDate(new Date().getDate() + 14))
                     }
                   },
                   next30days: {
                     text: 'Next 30 days',
                     period: {
-                      start: new Date(new Date().setDate(new Date().getDate() + 1)),
+                      start: new Date(),
                       end: new Date(new Date().setDate(new Date().getDate() + 30))
                     }
                   }
@@ -274,7 +301,7 @@ function ReservationForm({ onSubmit }) {
             />
           </div>
 
-          {/* Kontaktiniai duomenys */}
+          {/* Contact Information */}
           <div className="grid md:grid-cols-2 gap-3">
             <div>
               <label className="block mb-1 text-black">Contact Name</label>
@@ -290,9 +317,17 @@ function ReservationForm({ onSubmit }) {
             <input type="tel" name="contactPhone" value={formData.contactPhone} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required />
           </div>
 
-          {/* Submit mygtukas */}
-          <button type="submit" className="w-full bg-black text-white p-4 rounded-lg hover:bg-red-600 transition duration-300 transform hover:shadow-lg flex items-center justify-center" disabled={loading}>
-            {loading ? <PulseLoader color="#ffffff" size={15} /> : 'Make a Reservation'}
+          {/* Reservation button */}
+          <button
+            type="submit"
+            className="w-full bg-black text-white p-4 rounded-lg hover:bg-red-600 transition duration-300 transform hover:shadow-lg flex items-center justify-center"
+            disabled={loading}
+          >
+            {loading ? (
+              <PulseLoader color="#ffffff" size={15} />
+            ) : (
+              "Make a Reservation"
+            )}
           </button>
         </form>
       )}
