@@ -2,21 +2,27 @@ import { useState, useEffect } from 'react';
 import { PulseLoader } from 'react-spinners';
 import Datepicker from 'react-tailwindcss-datepicker';
 import { useContext } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-
-
 
 function ReservationForm({ onSubmit }) {
   const { user } = useContext(AuthContext);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchParams] = useSearchParams();
+  const quantity = parseInt(searchParams.get('quantity')) || 1;
+  const category = searchParams.get('category');
+  const toolName = searchParams.get('name');
+  const { id } = useParams();
 
   if (!user) {
     return <Navigate to="/login" />;
   }
 
   const [formData, setFormData] = useState({
-    toolType: '',
-    tool: '',
+    toolType: category || '',
+    tool: id,
+    toolName: toolName || '',
+    quantity: quantity,
     startDate: null,
     endDate: null,
     pickupLocation: '',
@@ -24,32 +30,28 @@ function ReservationForm({ onSubmit }) {
     contactEmail: '',
     contactPhone: ''
   });
-  console.log('toolType', formData.toolType);
 
- 
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState({});
   const [tools, setTools] = useState([]);
   const [fetchError, setFetchError] = useState(null);
 
-  
   const disabledDates = [
     {
-      startDate: new Date(2024, 11, 1), // December 1, 2024
-      endDate: new Date(2024, 11, 10) // December 10, 2024
+      startDate: new Date(2024, 11, 1),
+      endDate: new Date(2024, 11, 10)
     },
     {
-      startDate: new Date(2024, 11, 20), // December 20, 2024
-      endDate: new Date(2024, 11, 25) // December 25, 2024
+      startDate: new Date(2024, 11, 20),
+      endDate: new Date(2024, 11, 25)
     }
   ];
 
   const pickupLocations = ['Vilnius', 'Kaunas', 'Klaipėda', 'Šiauliai', 'Panevėžys'];
 
-
-  
   useEffect(() => {
     const fetchProducts = async () => {
+      setIsLoading(true);
       try {
         const response = await fetch('http://localhost:3000/tools');
         if (!response.ok) {
@@ -57,72 +59,87 @@ function ReservationForm({ onSubmit }) {
         }
         const data = await response.json();
 
-        // Update this section to match your API response structure
         const categorized = {};
         data.tools.forEach((product) => {
-          const toolType = product.toolType;
+          const toolType = product.description['Prekės tipas'];
           if (!categorized[toolType]) {
             categorized[toolType] = [];
           }
           categorized[toolType].push({
             _id: product._id,
-            name: product.name, 
+            name: product.name,
+            description: product.description
           });
         });
 
         setCategories(categorized);
+
+        // If category exists, set the tools for that category
+        if (category && categorized[category]) {
+          setTools(categorized[category]);
+        }
       } catch (error) {
         console.error('Error fetching products:', error);
         setFetchError('Failed to load products. Please try again later.');
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchProducts();
-  }, []);
+  }, [category]);
+
+  useEffect(() => {
+    if (categories[category]) {
+      setTools(categories[category]);
+      const selectedTool = categories[category].find((tool) => tool.name === toolName);
+      if (selectedTool) {
+        setFormData((prev) => ({
+          ...prev,
+          tool: selectedTool._id,
+          toolName: selectedTool.name
+        }));
+      }
+    }
+  }, [categories, category, toolName]);
+
   const handleChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-  
+
     if (name === 'tool') {
       const selectedTool = tools.find((tool) => tool._id === value);
       setFormData((prev) => ({
         ...prev,
-        tool: value, // tool ID
-        toolName: selectedTool ? selectedTool.name : '', 
+        tool: value,
+        toolName: selectedTool ? selectedTool.name : ''
       }));
     } else {
       setFormData((prev) => ({
         ...prev,
         [name]: value,
-        ...(name === 'toolType' && { tool: '', toolName: '' }), // Atnaujina tool ir toolName kai pasikeicia toolType
+        ...(name === 'toolType' && { tool: '', toolName: '' })
       }));
-  
-      // Atnaujina tools state kai pasikeicia toolType
+
       if (name === 'toolType') {
         setTools(categories[value] || []);
       }
     }
   };
 
-  
   const handleDateChange = (newValue) => {
-    console.log('Pasirinktos startDate:', newValue.startDate);
-    console.log('Pasirinktos endDate:', newValue.endDate);
-    
     setFormData((prev) => ({
       ...prev,
       startDate: newValue.startDate,
-      endDate: newValue.endDate,
+      endDate: newValue.endDate
     }));
   };
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // Pasiimam token is localstorage ir tikrinam ar vartotojas authentifikuotas
-    const token = localStorage.getItem('token'); 
+    const token = localStorage.getItem('token');
 
     if (!token) {
       alert('You must be logged in to make a reservation.');
@@ -130,34 +147,31 @@ function ReservationForm({ onSubmit }) {
       return;
     }
 
-  
     const payload = {
-      productId: formData.tool, 
+      productId: formData.tool, // This is the MongoDB _id
       toolType: formData.toolType,
-      tool: formData.toolName, 
-      dateRange: {
-        from: formData.startDate ? formData.startDate.toISOString() : null,
-        to: formData.endDate ? formData.endDate.toISOString() : null
-      },
+      tool: formData.toolName,
+      quantity: formData.quantity,
       pickupLocation: formData.pickupLocation,
       contactName: formData.contactName,
       contactEmail: formData.contactEmail,
-      contactPhone: formData.contactPhone
+      contactPhone: formData.contactPhone,
+      dateRange: {
+        from: formData.startDate,
+        to: formData.endDate
+      }
     };
-
-    console.log('Form Data:', formData); 
-    console.log('Payload:', payload);     
 
     try {
       const response = await fetch('http://localhost:3000/reservations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(payload)
       });
-    
+
       if (response.ok) {
         const result = await response.json();
         onSubmit(result);
@@ -177,11 +191,14 @@ function ReservationForm({ onSubmit }) {
   return (
     <div className="max-w-2xl mx-auto p-4 bg-white shadow-2xl rounded-xl border-2 border-red500">
       <h2 className="text-2xl font-bold mb-4 flex items-center text-black">Tool Reservation</h2>
-      {fetchError ? (
+      {isLoading ? (
+        <div className="flex justify-center">
+          <PulseLoader color="#000000" size={15} />
+        </div>
+      ) : fetchError ? (
         <p className="text-red-500">{fetchError}</p>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Select Category */}
           <div>
             <label className="block mb-1 font-bold text-black">Select Category</label>
             <select name="toolType" value={formData.toolType} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required>
@@ -196,7 +213,6 @@ function ReservationForm({ onSubmit }) {
             </select>
           </div>
 
-          {/* Select Tool */}
           <div>
             <label className="block mb-1 font-bold text-black">Select Tool</label>
             <select
@@ -218,7 +234,11 @@ function ReservationForm({ onSubmit }) {
             </select>
           </div>
 
-          {/* Pickup Location */}
+          <div>
+            <label className="block mb-1 font-bold text-black">Quantity</label>
+            <input type="number" name="quantity" value={formData.quantity} onChange={handleChange} min="1" className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required />
+          </div>
+
           <div>
             <label className="block mb-1 font-bold text-black">Pickup Location</label>
             <select name="pickupLocation" value={formData.pickupLocation} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required>
@@ -233,7 +253,6 @@ function ReservationForm({ onSubmit }) {
             </select>
           </div>
 
-          {/* DatePicker */}
           <div className="grid md:grid-cols-1 gap-3">
             <p className="font-bold">Reservation date</p>
             <Datepicker
@@ -301,7 +320,6 @@ function ReservationForm({ onSubmit }) {
             />
           </div>
 
-          {/* Contact Information */}
           <div className="grid md:grid-cols-2 gap-3">
             <div>
               <label className="block mb-1 text-black">Contact Name</label>
@@ -312,22 +330,14 @@ function ReservationForm({ onSubmit }) {
               <input type="email" name="contactEmail" value={formData.contactEmail} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required />
             </div>
           </div>
+
           <div>
             <label className="block mb-1 text-black">Contact Phone</label>
             <input type="tel" name="contactPhone" value={formData.contactPhone} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required />
           </div>
 
-          {/* Reservation button */}
-          <button
-            type="submit"
-            className="w-full bg-black text-white p-4 rounded-lg hover:bg-red-600 transition duration-300 transform hover:shadow-lg flex items-center justify-center"
-            disabled={loading}
-          >
-            {loading ? (
-              <PulseLoader color="#ffffff" size={15} />
-            ) : (
-              "Make a Reservation"
-            )}
+          <button type="submit" className="w-full bg-black text-white p-4 rounded-lg hover:bg-red-600 transition duration-300 transform hover:shadow-lg flex items-center justify-center" disabled={loading}>
+            {loading ? <PulseLoader color="#ffffff" size={15} /> : 'Make a Reservation'}
           </button>
         </form>
       )}
