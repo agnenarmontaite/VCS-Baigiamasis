@@ -69,9 +69,9 @@ const toolsSchema = new Schema({
       origin_country: {type: String, required: true}
     }
   },
-  isAvailable: { type: Boolean, required: true },
-  isVisible: { type: Boolean, default: true },
-  isDraft: { type: Boolean, required: true },
+  isAvailable: { type: Boolean, required: true, default: false },
+  isVisible: { type: Boolean, required: true, default: false },
+  isDraft: { type: Boolean, required: true, default: true },
   reservation: [{ type: String, default: '' }],
   reviews: [{ type: String, default: '' }]
 }, {timestamps: {createdAt: "createdAt"}});
