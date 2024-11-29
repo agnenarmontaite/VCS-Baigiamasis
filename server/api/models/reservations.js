@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-// import User from './User.js';
+import User from './User.js';
 
 const reservationSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
