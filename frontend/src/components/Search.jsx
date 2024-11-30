@@ -41,14 +41,14 @@ const Search = ({ onSearch }) => {
               <option value="">Select Category</option>
               <option value="Generatoriai">Generators</option>
               <option value="Perforatoriai">Rotary Hammers</option>
-              <option value="Elektrinė freza">Electric Router</option>
-              <option value="Freza">Router</option>
-              <option value="Plytelių pjovimo staklės">Tile Cutting Machine</option>
-              <option value="Diskinis pjūklas">Circular Saw</option>
-              <option value="Pjovimo staklės">Cutting Machine</option>
+              <option value="Elektrinė freza">Electric Routers</option>
+              <option value="Freza">Routers</option>
+              <option value="Plytelių pjovimo staklės">Tile Cutting Machines</option>
+              <option value="Diskinis pjūklas">Circular Saws</option>
+              <option value="Pjovimo staklės">Cutting Machines</option>
               <option value="Atskėlimo plaktukai">Demolition Hammers</option>
               <option value="Grandininiai pjūklai">Chain Saws</option>
-              <option value="Statybinis dulkių siurblys">Construction Vacuum</option>
+              <option value="Statybinis dulkių siurblys">Construction Vacuums</option>
             </select>
             <i className="bi bi-tools absolute left-4 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
           </div>

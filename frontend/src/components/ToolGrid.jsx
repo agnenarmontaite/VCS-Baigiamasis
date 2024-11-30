@@ -21,10 +21,10 @@ function ToolGrid({ searchCriteria = { searchText: '', category: '' } }) {
 
   useEffect(() => {
     handleSearch()
-  }, [searchCriteria])
+  }, [searchCriteria, products])
 
   const handleSearch = () => {
-    if (!searchCriteria.category && !searchCriteria.searchText) {
+    if ((!searchCriteria.category && !searchCriteria.searchText) || products.length == 0) {
       setSearchResults(null);
       setIsSearchActive(false);
       return;
