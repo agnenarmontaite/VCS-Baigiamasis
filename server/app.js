@@ -4,12 +4,11 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import toolsRoutes from "./api/routes/product.js"
+import toolsRoutes from './api/routes/product.js';
 import reservationRoutes from './api/routes/reservations.js';
-
+import contactRoutes from './api/routes/contact.js';
 import authRoutes from './api/routes/auth.js';
 dotenv.config();
-
 
 const app = express();
 
@@ -45,9 +44,9 @@ app.use((req, res, next) => {
 
 //routes
 
-app.use('/tools', toolsRoutes)
-app.use('/reservations', reservationRoutes)
-
+app.use('/tools', toolsRoutes);
+app.use('/reservations', reservationRoutes);
+app.use('/api/contact', contactRoutes);
 
 app.use((req, res, next) => {
   const error = new Error('Not found');

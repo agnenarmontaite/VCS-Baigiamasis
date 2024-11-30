@@ -12,6 +12,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Tools from './pages/Tools';
 import Categories from './pages/Categories';
+import Contact from './pages/Contact';
+import AboutUs from './pages/AboutUs';
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
           <Route path="/categories" element={<Categories />} />
           <Route path="/booking/:id" element={<Booking />} />
           <Route path="/confirmation" element={<Confirmation />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path='/about' element={<AboutUs />} />
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
