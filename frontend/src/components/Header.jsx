@@ -21,8 +21,8 @@ function Header() {
           <Link to="/" className="py-[14px] px-[20px] text-center text-black hover:text-black border border-white hover:border-red-500 hover:rounded-[25px]">Home</Link>
           <Link to="/tools" className="py-[14px] px-[20px] text-center text-black hover:text-black border border-white hover:border-red-500 hover:rounded-[25px]">Tools</Link>
           <Link to="/categories" className="py-[14px] px-[20px] text-center text-black border border-white hover:text-black hover:border hover:border-red-500 hover:rounded-[25px]">Categories</Link>
-          <Link to="#about-us" className="py-[14px] px-[20px] text-center text-black border border-white hover:text-black hover:border hover:border-red-500 hover:rounded-[25px]">About Us</Link>
-          <Link to="#contact" className="py-[14px] px-[20px] text-center border border-white text-black hover:text-black hover:border hover:border-red-500 hover:rounded-[25px]">Contact</Link>
+          <Link to="/about" className="py-[14px] px-[20px] text-center text-black border border-white hover:text-black hover:border hover:border-red-500 hover:rounded-[25px]">About Us</Link>
+          <Link to="/contact" className="py-[14px] px-[20px] text-center border border-white text-black hover:text-black hover:border hover:border-red-500 hover:rounded-[25px]">Contact</Link>
           {isLoggedIn && user?.role === 'admin' && 
             <Link to="/admin" className="py-[14px] px-[20px] text-center border border-white text-black hover:text-black hover:border hover:border-red-500 hover:rounded-[25px]">Admin</Link>
           }
