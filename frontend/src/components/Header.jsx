@@ -20,7 +20,7 @@ function Header() {
         <div className={`nav-links hidden lg:flex justify-center flex-grow`}>
           <Link to="/" className="py-[14px] px-[20px] text-center text-black hover:text-black border border-white hover:border-red-500 hover:rounded-[25px]">Home</Link>
           <Link to="/tools" className="py-[14px] px-[20px] text-center text-black hover:text-black border border-white hover:border-red-500 hover:rounded-[25px]">Tools</Link>
-          <Link to="#categories" className="py-[14px] px-[20px] text-center text-black border border-white hover:text-black hover:border hover:border-red-500 hover:rounded-[25px]">Categories</Link>
+          <Link to="/categories" className="py-[14px] px-[20px] text-center text-black border border-white hover:text-black hover:border hover:border-red-500 hover:rounded-[25px]">Categories</Link>
           <Link to="#about-us" className="py-[14px] px-[20px] text-center text-black border border-white hover:text-black hover:border hover:border-red-500 hover:rounded-[25px]">About Us</Link>
           <Link to="#contact" className="py-[14px] px-[20px] text-center border border-white text-black hover:text-black hover:border hover:border-red-500 hover:rounded-[25px]">Contact</Link>
           {isLoggedIn && user?.role === 'admin' && 
@@ -68,7 +68,7 @@ function Header() {
             <div className="flex flex-col space-y-4 text-center">
               <Link to="/" onClick={toggleMenu}>Home</Link>
               <Link to="/tools" onClick={toggleMenu}>Tools</Link>
-              <Link to="#categories" onClick={toggleMenu}>Categories</Link>
+              <Link to="/categories" onClick={toggleMenu}>Categories</Link>
               <Link to="#about-us" onClick={toggleMenu}>About Us</Link>
               <Link to="#contact" onClick={toggleMenu}>Contact</Link>
               {isLoggedIn && user?.role === 'admin' && (
