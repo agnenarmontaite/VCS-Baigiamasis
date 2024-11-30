@@ -1,10 +1,8 @@
 import express from 'express';
 import mongoose from 'mongoose';
-
 import Reservation from '../models/reservations.js';
 import Tools from '../models/product.js';
 import User from '../models/User.js';
-
 import auth from '../middleware/auth.js';
 
 const router = express.Router();
@@ -44,7 +42,7 @@ router.get('/', auth, async (req, res) => {
 router.post('/', auth, async (req, res) => {
   // Is request paimamas productId, quantity ir dateRange
   const { userId } = req.userData;
-  const { productId, quantity, dateRange } = req.body;
+  const { productId, toolType, tool, quantity, dateRange, pickupLocation, contactName, contactEmail, contactPhone } = req.body;
 
   // Patikrina ar dateRange teisingai ivestas
   if (!dateRange || !dateRange.from || !dateRange.to) {
@@ -52,13 +50,6 @@ router.post('/', auth, async (req, res) => {
       message: 'Invalid date range'
     });
   }
-
-  // Patikrina ar productId ir userId yra valid ObjectId
-  // if (!mongoose.Types.ObjectId.isValid(productId) || !mongoose.Types.ObjectId.isValid(userId)) {
-  //     return res.status(400).json({
-  //         message: 'Invalid productId or userId format'
-  //     });
-  // }
 
   try {
     // Patikrina ar produktas egzistuoja
@@ -70,17 +61,29 @@ router.post('/', auth, async (req, res) => {
     console.log('Received dateRange:', dateRange);
     console.log('Creating reservation with data:', {
       productId,
+      toolType,
+      tool,
       quantity,
       userId,
-      dateRange
+      dateRange,
+      pickupLocation,
+      contactName,
+      contactEmail,
+      contactPhone
     });
 
     // Sukuria nauja rezervacija
     const reservation = new Reservation({
       _id: new mongoose.Types.ObjectId(),
       product: productId,
+      toolType,
+      tool,
       quantity: quantity || 1, // Jei nera kiekio, naudoja 1 kaip default
       userId: userId, // Autentifikacijos metu issaugotas userId
+      pickupLocation,
+      contactName,
+      contactEmail,
+      contactPhone,
       dateRange: {
         from: dateRange.from,
         to: dateRange.to
@@ -93,8 +96,8 @@ router.post('/', auth, async (req, res) => {
 
     await Tools.findByIdAndUpdate(
       productId,
-      { 
-        $push: { 
+      {
+        $push: {
           reservations: {
             userId: userId,
             reservationId: savedReservation._id,
@@ -102,7 +105,7 @@ router.post('/', auth, async (req, res) => {
               startDate: dateRange.from,
               endDate: dateRange.to
             }
-          }, // Push nauja irankio rezervacija tools sekcijoje
+          } // Push nauja irankio rezervacija tools sekcijoje
         }
       },
       { new: true } // Grazina atnaujinta user objekta
