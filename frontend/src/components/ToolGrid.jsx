@@ -49,10 +49,10 @@ function ToolGrid({ searchCriteria = { searchText: '', category: '' } }) {
   };
 
   return (
-    <div className="most-popular-tools flex flex-col items-center mt-6 ">
+    <div className="most-popular-tools flex flex-col items-center mt-6 mb-6">
       <h2 className="text-[26px] sm:text-[32px] lg:text-[48px] text-center p-1 md:p-6">{isSearchActive ? `Found ${searchResults.length} results` : 'Most popular tools'}</h2>
       <div className="tool-grid flex justify-center">
-        <div className="tool-grid-inner flex flex-wrap justify-around w-[90%]">
+        <div className="tool-grid-inner flex flex-wrap justify-around content-stretch w-[100%] lg:w-[90%] gap-2 mt-2">
           {(searchResults && isSearchActive ? searchResults : products).map((item) => (
             <ToolCard item={item} key={item._id} />
           ))}

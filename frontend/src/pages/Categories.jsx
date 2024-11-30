@@ -9,7 +9,7 @@ import DemolitionHammersLogo from '../assets/atskelimo-plaktukas.svg?react'
 import ChainSawsLogo from '../assets/grandininis-pjuklas.svg?react'
 import ConstructionVacuumLogo from '../assets/statybinis-dulkiu-siurblys.svg?react'
 import ToolGrid from '../components/ToolGrid';
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
 
@@ -39,7 +39,7 @@ const Categories = () => {
     return (
         <div>
             <div className='flex flex-col items-center'>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 w-[80%] max-w-[1300px] mt-3 md:mt-7">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 w-[65%] sm:w-[80%] max-w-[1300px] mt-3 md:mt-7">
                     {categories.map((item) => (
                         <div key={item.key} onClick={() => handleSearch(item.key)} className={'text-center border flex flex-col items-center w-[120px] lg:w-[155px] xl:w-[200px] border-gray-200 ' + (searchCriteria.category === item.key ? 'shadow-[0_0_8px_2px_rgba(239,68,68,0.5)]' : '')}>
                             <span className="text-gray-500 w-[40px] sm:w-[60px] md:w-[70px] lg:w-[90px] lg:h-[150px]">{item.icon}</span>
