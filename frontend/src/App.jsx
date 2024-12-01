@@ -14,9 +14,9 @@ import Tools from './pages/Tools';
 import Categories from './pages/Categories';
 import Contact from './pages/Contact';
 import AboutUs from './pages/AboutUs';
-import TermsOfUse from './pages/TermsOfUse';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import FAQ from './pages/FAQ';
+import TermsOfUse from './components/TermsOfUse';
+import PrivacyPolicy from './components/PrivacyPolicy';
+import FAQ from './components/FAQ';
 
 function App() {
   return (
