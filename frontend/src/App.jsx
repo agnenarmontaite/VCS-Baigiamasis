@@ -14,6 +14,9 @@ import Tools from './pages/Tools';
 import Categories from './pages/Categories';
 import Contact from './pages/Contact';
 import AboutUs from './pages/AboutUs';
+import TermsOfUse from './pages/TermsOfUse';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import FAQ from './pages/FAQ';
 
 function App() {
   return (
@@ -32,6 +35,9 @@ function App() {
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/terms" element={<TermsOfUse/>}/>
+          <Route path="/privacy" element={<PrivacyPolicy/>}/>
+          <Route path="/faq" element={<FAQ/>}/>
         </Routes>
       </div>
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} newestOnTop={true} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light" />

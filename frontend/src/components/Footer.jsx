@@ -24,12 +24,12 @@ const Footer = () => {
                     <div className="footer-navigation-block flex flex-col gap-[21px]">
                         <p className="text-red-500 font-bold">Navigation</p>
                         <Link to="/about">About Us</Link>
-                        <Link to="/about">Terms of Use</Link>
-                        <Link to="/about">Privacy Policy</Link>
+                        <Link to="/terms">Terms of Use</Link>
+                        <Link to="/privacy">Privacy Policy</Link>
                     </div>
                     <div className="footer-help-block flex flex-col gap-[21px]">
                         <p className="text-red-500 font-bold">Help</p>
-                        <Link to="/about">FAQ</Link>
+                        <Link to="/faq">FAQ</Link>
                         <Link to="/contact">Contact</Link>
                     </div>
                 </div>
