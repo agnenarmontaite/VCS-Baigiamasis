@@ -11,6 +11,7 @@ import ConstructionVacuumLogo from '../assets/statybinis-dulkiu-siurblys.svg?rea
 import ToolGrid from '../components/ToolGrid';
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import Search from '../components/Search'
 
 
 const Categories = () => {
@@ -38,11 +39,14 @@ const Categories = () => {
 
     return (
         <div>
+            <Search searchCriteria={searchCriteria} onSearch={setSearchCriteria} />
             <div className='flex flex-col items-center'>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 w-[65%] sm:w-[80%] max-w-[1300px] mt-3 md:mt-7">
+                <div
+                    className="flex flex-wrap justify-around content-start gap-2 w-[75%] xs:w-[60%] sm:w-[70%] max-w-[900px] mt-3 md:mt-7"
+                >
                     {categories.map((item) => (
-                        <div key={item.key} onClick={() => handleSearch(item.key)} className={'text-center border flex flex-col items-center w-[120px] lg:w-[155px] xl:w-[200px] border-gray-200 ' + (searchCriteria.category === item.key ? 'shadow-[0_0_8px_2px_rgba(239,68,68,0.5)]' : '')}>
-                            <span className="text-gray-500 w-[40px] sm:w-[60px] md:w-[70px] lg:w-[90px] lg:h-[150px]">{item.icon}</span>
+                        <div key={item.key} onClick={() => handleSearch(item.key)} className={'text-center border flex flex-col items-center w-[120px] lg:w-[155px] mt-1 border-gray-200 bg-white ' + (searchCriteria.category === item.key ? 'shadow-[0_0_8px_2px_rgba(239,68,68,0.5)]' : 'shadow-md')}>
+                            <span className="text-gray-500 w-[40px] sm:w-[60px] md:w-[70px] lg:w-[90px] p-1 lg:p-2">{item.icon}</span>
                             <h3 className="text-[12px] lg:text-[20px]">{item.title}</h3>
                         </div>
                     ))}
