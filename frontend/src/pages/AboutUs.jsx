@@ -1,8 +1,35 @@
-import React from 'react';
+import { Link } from "react-router-dom";
 
 const AboutUs = () => {
   return (
-    <div className="container m-auto p-10 text-center">
+    <div className="container m-auto p-10 text-justify">
+      <nav>
+        <ul className="flex justify-center space-x-8">
+          <li className="underline py-[14px] px-[20px] text-center text-black hover:text-black border border-gray-50 hover:border-red-500 hover:rounded-[25px]">
+            <Link to="/about" className="text-lg text-gray-700">
+              About Us
+            </Link>
+          </li>
+          <li className="py-[14px] px-[20px] text-center text-black hover:text-black border border-gray-50 hover:border-red-500 hover:rounded-[25px]">
+            <Link to="/terms" className="text-lg text-gray-700">
+              Terms of Use
+            </Link>
+          </li>
+          <li className="py-[14px] px-[20px] text-center text-black hover:text-black border border-gray-50 hover:border-red-500 hover:rounded-[25px]">
+            <Link to="/privacy" className="text-lg text-gray-700">
+              Privacy Policy
+            </Link>
+          </li>
+          <li className="py-[14px] px-[20px] text-center text-black hover:text-black border border-gray-50 hover:border-red-500 hover:rounded-[25px]">
+            <Link to="/faq" className="text-lg text-gray-700">
+              FAQ
+            </Link>
+          </li>
+        </ul>
+     </nav>
+
+
+
       <div className="lg:h-[550px] bg-white border border-gray-100 rounded-[10px] shadow-lg transition-shadow overflow-hidden">
         <h1 className="text-[26px] sm:text-[32px] lg:text-[48px] p-[40px] text-center">About Us</h1>
         <p className="text-[18px] tracking-[2px] p-10 pt-2 pb-2">
