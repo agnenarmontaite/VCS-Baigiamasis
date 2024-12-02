@@ -36,7 +36,7 @@ export const procureTool = async (req, res, next) => {
           product: doc,
           request: {
             type: 'GET',
-            description: 'Get one tool',
+            description: 'Get all products',
             url: 'http://localhost:3000/tools'
           }
         });
@@ -50,7 +50,7 @@ export const procureTool = async (req, res, next) => {
     });
 };
 export const produceTool = async (req, res, next) => {
-  const tool = new Tools(req.body);
+  const tool = new Tools(req.tools);
   tool
     .save()
     .then((result) => {
@@ -79,13 +79,13 @@ export const reformTool = async (req, res, next) => {
     return res.status(400).json({ error: 'No such tool was found' });
   }
   const updateOps = req.body
-  Tools.findByIdAndUpdate({_id: id}, updateOps, {new: true})
+  Tools.findOneAndUpdate({_id: id}, updateOps, {new: true})
     .exec()
     .then((result) => {
       res.status(200).json({
         message: 'Product updated',
         request: {
-          type: 'PATCH',
+          type: 'GET',
           url: 'http://localhost:3000/tools/' + id,
           description: 'Update tool'
         }
@@ -107,7 +107,7 @@ export const eradicateTool = async (req, res, next) => {
         message: 'Product deleted',
         id,
         request: {
-          type: 'DELETE',
+          type: 'GET',
           url: 'http://localhost:3000/tools',
           body: { name: 'String', price: 'Number' }
         }
