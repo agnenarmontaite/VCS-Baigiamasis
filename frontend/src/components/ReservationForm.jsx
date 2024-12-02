@@ -61,7 +61,7 @@ function ReservationForm({ onSubmit }) {
 
         const categorized = {};
         data.tools.forEach((product) => {
-          const toolType = product.description['Prekės tipas'];
+          const toolType = product.description['productType'];
           if (!categorized[toolType]) {
             categorized[toolType] = [];
           }

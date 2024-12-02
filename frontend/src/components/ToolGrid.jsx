@@ -37,7 +37,7 @@ function ToolGrid({ searchCriteria = { searchText: '', category: '' } }) {
     const filteredProducts = products.filter((product) => {
       const matchesSearch = !searchCriteria.searchText || product.name.toLowerCase().includes(searchCriteria.searchText.toLowerCase());
 
-      const matchesCategory = !searchCriteria.category || product.description['Prekės tipas'] === searchCriteria.category;
+      const matchesCategory = !searchCriteria.category || product.description['productType'] === searchCriteria.category;
 
       return matchesSearch && matchesCategory;
     });
