@@ -67,9 +67,8 @@ function Header() {
             <div className="flex flex-col space-y-4 text-center">
               <Link to="/" onClick={toggleMenu}>Home</Link>
               <Link to="/tools" onClick={toggleMenu}>Tools</Link>
-              <Link to="/categories" onClick={toggleMenu}>Categories</Link>
-              <Link to="#about-us" onClick={toggleMenu}>About Us</Link>
-              <Link to="#contact" onClick={toggleMenu}>Contact</Link>
+              <Link to="/about" onClick={toggleMenu}>About Us</Link>
+              <Link to="/contact" onClick={toggleMenu}>Contact</Link>
               {isLoggedIn && user?.role === 'admin' && (
                 <Link to="/admin" onClick={toggleMenu}>Admin</Link>
               )}

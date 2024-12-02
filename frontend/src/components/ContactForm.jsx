@@ -45,7 +45,7 @@ const ContactForm = () => {
   };
 
   return (
-    <div className="container lg:h-[auto] m-auto p-10 text-center">
+    <div className="container lg:h-[auto] m-auto text-center">
       <div className="bg-white border border-gray-100 rounded-[10px] shadow-lg transition-shadow overflow-hidden">
         <h1 className="text-[26px] sm:text-[32px] lg:text-[48px] p-[40px] text-center">Contact us</h1>
 
@@ -60,7 +60,7 @@ const ContactForm = () => {
             <label className="block text-gray-700 mb-2 text-left font-bold">Your message:</label>
             <textarea value={message} onChange={(e) => setMessage(e.target.value)} className="bg-gray-100 w-full px-4 py-2 border border-gray-300 rounded-lg mb-5" required />
 
-            <button type="submit" disabled={isSubmitting} className="w-full py-2 px-4 bg-gray-600 text-white rounded-md mt-4 hover:bg-gray-700 transition duration-300">
+            <button type="submit" disabled={isSubmitting} className="w-full py-2 px-4 bg-gray-500 text-white rounded-md mt-4 hover:bg-red-500 transition duration-300">
               {isSubmitting ? 'Sending...' : 'Send Message'}
             </button>
           </form>
