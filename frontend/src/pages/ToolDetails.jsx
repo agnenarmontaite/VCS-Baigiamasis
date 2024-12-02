@@ -86,7 +86,7 @@ function ToolDetails() {
             Total rent price: <span className="font-bold"> {totalPrice} € </span>
           </p>
           <Link
-            to={`/booking/${id}?quantity=${quantity}&category=${tool.description.details['productType']}&name=${tool.description.nameRetail}`}
+            to={`/booking/${id}?quantity=${quantity}&category=${tool.description.details['Prekės tipas']}&name=${tool.description.nameRetail}`}
             className="bg-red-500 text-white rounded-[25px] border border-red-500 hover:border-black ml-2 px-5 py-3 font-medium"
           >
             Book reservation
