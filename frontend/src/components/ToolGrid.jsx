@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import ToolCard from './ToolCard';
 
-function ToolGrid({ searchCriteria = { searchText: '', category: '' } }) {
+function ToolGrid({ searchCriteria = { searchText: '', category: '' }, limit = '' }) {
   const [products, setProducts] = useState([]);
   const [searchResults, setSearchResults] = useState(null);
   const [isSearchActive, setIsSearchActive] = useState(false);
@@ -12,13 +12,26 @@ function ToolGrid({ searchCriteria = { searchText: '', category: '' } }) {
         return res.json();
       })
       .then((data) => {
-        setProducts(data.tools);
+        const tools = data.tools.map((item) => {
+          if(item.name && item.description && item.price && item.images) {
+            return item
+          }
+        }).filter( Boolean )
+
+        console.log(tools)
+
+        if (limit) {
+          setProducts(tools.slice(0, 8))
+        } else {
+          setProducts(tools)
+        }
       })
       .catch((error) => {
         console.error('Fetch error:', error);
       });
   }, []);
 
+  console.log(products)
   useEffect(() => {
     handleSearch()
   }, [searchCriteria, products])
@@ -35,9 +48,9 @@ function ToolGrid({ searchCriteria = { searchText: '', category: '' } }) {
     console.log('Search Input:', searchCriteria);
 
     const filteredProducts = products.filter((product) => {
-      const matchesSearch = !searchCriteria.searchText || product.name.toLowerCase().includes(searchCriteria.searchText.toLowerCase());
+      const matchesSearch = !searchCriteria.searchText || (product.name || '').toLowerCase().includes(searchCriteria.searchText.toLowerCase());
 
-      const matchesCategory = !searchCriteria.category || product.description['Prekės tipas'] === searchCriteria.category;
+      const matchesCategory = !searchCriteria.category || (product.description['Prekės tipas'] || '') === searchCriteria.category;
 
       return matchesSearch && matchesCategory;
     });
@@ -49,10 +62,10 @@ function ToolGrid({ searchCriteria = { searchText: '', category: '' } }) {
   };
 
   return (
-    <div className="flex flex-col items-center my-7 w-[90%] max-w-[1600px]">
+    <div className="flex flex-col items-center mb-7 w-[90%] max-w-[1500px]">
       {isSearchActive ? <h2 className="text-[20px] text-center p-1 md:p-6">Found {searchResults.length} results</h2> : ''}
-      <div className="flex justify-center">
-        <div className="flex flex-wrap justify-around content-stretch gap-2">
+      <div className="flex justify-center items-center">
+        <div className="flex flex-wrap justify-center content-stretch gap-2">
           {
             (searchResults && isSearchActive ? searchResults : products).map((item) => (
               <ToolCard item={item} key={item._id} />

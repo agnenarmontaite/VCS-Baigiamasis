@@ -4,15 +4,20 @@ import Datepicker from 'react-tailwindcss-datepicker';
 import { useContext } from 'react';
 import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import Map from './Map';
 
 function ReservationForm({ onSubmit }) {
   const { user } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams] = useSearchParams();
+  const [formError, setFormError] = useState('')
   const quantity = parseInt(searchParams.get('quantity')) || 1;
   const category = searchParams.get('category');
   const toolName = searchParams.get('name');
   const { id } = useParams();
+  const [pickupLocations, setPickupLocations] = useState([]);
+  const [data_send, setData_send] = useState([])
+  const [pickupAddress, setPickupAddress] = useState("")
 
   if (!user) {
     return <Navigate to="/login" />;
@@ -26,9 +31,9 @@ function ReservationForm({ onSubmit }) {
     startDate: null,
     endDate: null,
     pickupLocation: '',
-    contactName: '',
-    contactEmail: '',
-    contactPhone: ''
+    contactName: user.name || '',
+    contactEmail: user.email || '',
+    contactPhone: user.phoneNumber || ''
   });
 
   const [loading, setLoading] = useState(false);
@@ -46,31 +51,63 @@ function ReservationForm({ onSubmit }) {
       endDate: new Date(2024, 11, 25)
     }
   ];
-
-  const pickupLocations = ['Vilnius', 'Kaunas', 'Klaipėda', 'Šiauliai', 'Panevėžys'];
-
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fecthStoresLocations = async () => {
       setIsLoading(true);
+      try{
+        const response = await fetch('http://localhost:3000/stores')
+        if(!response.ok) {
+          throw new Error(`HTTP! error! status: ${response.status}` )
+        }
+        const data = await response.json()
+        let pullArray = []
+        if(pullArray > 0) {
+          pullArray = []
+        }
+        data.stores.forEach((store) => {
+          pullArray.push(store.location_city)
+        })
+        setPickupLocations(pullArray)
+        setData_send(data)
+      } catch (error) {
+        console.error('Error fetching stores:', error);
+        setFetchError('Failed to load stores. Please try again later.');
+      } finally {
+      }
+    }
+    fecthStoresLocations()
+    const fetchProducts = async () => {
       try {
         const response = await fetch('http://localhost:3000/tools');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-
         const categorized = {};
         data.tools.forEach((product) => {
+
           const toolType = product.description['Prekės tipas'];
+          if (toolType) {
+            if (!categorized[toolType]) {
+              categorized[toolType] = [];
+            }
+            categorized[toolType].push({
+              _id: product._id,
+              name: product.name,
+              description: product.description
+            });
+          } else {
+            console.warn(`Tool with ID ${product._id} has an undefined category.`);
+
+          const toolType = product.description['productType'];
           if (!categorized[toolType]) {
             categorized[toolType] = [];
+
           }
-          categorized[toolType].push({
-            _id: product._id,
-            name: product.name,
-            description: product.description
-          });
+          }
         });
+
+        
 
         setCategories(categorized);
 
@@ -85,7 +122,6 @@ function ReservationForm({ onSubmit }) {
         setIsLoading(false);
       }
     };
-
     fetchProducts();
   }, [category]);
 
@@ -103,10 +139,13 @@ function ReservationForm({ onSubmit }) {
     }
   }, [categories, category, toolName]);
 
+const getAddress = (address) => {
+  return setPickupAddress(address)
+}
+
   const handleChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-
     if (name === 'tool') {
       const selectedTool = tools.find((tool) => tool._id === value);
       setFormData((prev) => ({
@@ -133,8 +172,13 @@ function ReservationForm({ onSubmit }) {
       startDate: newValue.startDate,
       endDate: newValue.endDate
     }));
+
+    if (newValue.startDate && newValue.endDate) {
+      setFormError('');
+    }
   };
 
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -147,12 +191,19 @@ function ReservationForm({ onSubmit }) {
       return;
     }
 
+
+    if (!formData.startDate || !formData.endDate) {
+      setFormError('Please select a reservation date.');
+      setLoading(false);
+      return;
+    }
+
     const payload = {
       productId: formData.tool, // This is the MongoDB _id
       toolType: formData.toolType,
       tool: formData.toolName,
       quantity: formData.quantity,
-      pickupLocation: formData.pickupLocation,
+      pickupLocation: pickupAddress,
       contactName: formData.contactName,
       contactEmail: formData.contactEmail,
       contactPhone: formData.contactPhone,
@@ -187,7 +238,6 @@ function ReservationForm({ onSubmit }) {
       setLoading(false);
     }
   };
-
   return (
     <div className="max-w-2xl mx-auto p-4 bg-white shadow-2xl rounded-xl border-2 border-red500">
       <h2 className="text-2xl font-bold mb-4 flex items-center text-black">Tool Reservation</h2>
@@ -199,9 +249,13 @@ function ReservationForm({ onSubmit }) {
         <p className="text-red-500">{fetchError}</p>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
+       
+
           <div>
             <label className="block mb-1 font-bold text-black">Select Category</label>
-            <select name="toolType" value={formData.toolType} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required>
+            <select name="toolType" value={formData.toolType} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required
+              onInvalid={(e) => e.target.setCustomValidity('Please select a category from the list')}
+              onInput={(e) => e.target.setCustomValidity('')}>
               <option value="" className="text-gray-500">
                 Categories
               </option>
@@ -222,6 +276,8 @@ function ReservationForm({ onSubmit }) {
               className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black disabled:opacity-50"
               required
               disabled={!formData.toolType}
+              onInvalid={(e) => e.target.setCustomValidity('Please select a tool from the list')}
+              onInput={(e) => e.target.setCustomValidity('')}
             >
               <option value="" className="text-gray-500">
                 Tools
@@ -241,20 +297,27 @@ function ReservationForm({ onSubmit }) {
 
           <div>
             <label className="block mb-1 font-bold text-black">Pickup Location</label>
-            <select name="pickupLocation" value={formData.pickupLocation} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required>
+            <select name="pickupLocation" value={formData.pickupLocation} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required
+            onInvalid={(e) => e.target.setCustomValidity('Please select a location from the list ')}
+            onInput={(e) => e.target.setCustomValidity('')}>
               <option value="" className="text-gray-500">
                 Locations
               </option>
               {pickupLocations.map((location) => (
                 <option key={location} value={location} className="text-black">
                   {location}
-                </option>
+              </option>
               ))}
             </select>
           </div>
 
+          <div>
+            <Map className="size-fit aspect-auto" data={data_send} getAddress={getAddress} current_location={formData.pickupLocation}/>
+          </div>
+
           <div className="grid md:grid-cols-1 gap-3">
-            <p className="font-bold">Reservation date</p>
+            <p className="font-bold">Reservation date </p>
+            {formError && <span className="text-red-500">{formError}</span>}
             <Datepicker
               primaryColor={'red'}
               value={{ startDate: formData.startDate, endDate: formData.endDate }}
@@ -264,6 +327,7 @@ function ReservationForm({ onSubmit }) {
               showFooter={true}
               disabledDates={disabledDates}
               className={''}
+              
               configs={{
                 shortcuts: {
                   today: {
