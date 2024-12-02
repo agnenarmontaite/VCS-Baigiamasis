@@ -4,6 +4,7 @@ import Datepicker from 'react-tailwindcss-datepicker';
 import { useContext } from 'react';
 import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import Map from './Map';
 
 function ReservationForm({ onSubmit }) {
   const { user } = useContext(AuthContext);
@@ -14,6 +15,9 @@ function ReservationForm({ onSubmit }) {
   const category = searchParams.get('category');
   const toolName = searchParams.get('name');
   const { id } = useParams();
+  const [pickupLocations, setPickupLocations] = useState([]);
+  const [data_send, setData_send] = useState([])
+  const [pickupAddress, setPickupAddress] = useState("")
 
   if (!user) {
     return <Navigate to="/login" />;
@@ -47,21 +51,41 @@ function ReservationForm({ onSubmit }) {
       endDate: new Date(2024, 11, 25)
     }
   ];
-
-  const pickupLocations = ['Vilnius', 'Kaunas', 'Klaipėda', 'Šiauliai', 'Panevėžys'];
-
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fecthStoresLocations = async () => {
       setIsLoading(true);
+      try{
+        const response = await fetch('http://localhost:3000/stores')
+        if(!response.ok) {
+          throw new Error(`HTTP! error! status: ${response.status}` )
+        }
+        const data = await response.json()
+        let pullArray = []
+        if(pullArray > 0) {
+          pullArray = []
+        }
+        data.stores.forEach((store) => {
+          pullArray.push(store.location_city)
+        })
+        setPickupLocations(pullArray)
+        setData_send(data)
+      } catch (error) {
+        console.error('Error fetching stores:', error);
+        setFetchError('Failed to load stores. Please try again later.');
+      } finally {
+      }
+    }
+    fecthStoresLocations()
+    const fetchProducts = async () => {
       try {
         const response = await fetch('http://localhost:3000/tools');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-
         const categorized = {};
         data.tools.forEach((product) => {
+
           const toolType = product.description['Prekės tipas'];
           if (toolType) {
             if (!categorized[toolType]) {
@@ -74,6 +98,11 @@ function ReservationForm({ onSubmit }) {
             });
           } else {
             console.warn(`Tool with ID ${product._id} has an undefined category.`);
+
+          const toolType = product.description['productType'];
+          if (!categorized[toolType]) {
+            categorized[toolType] = [];
+
           }
         });
 
@@ -90,7 +119,6 @@ function ReservationForm({ onSubmit }) {
         setIsLoading(false);
       }
     };
-
     fetchProducts();
   }, [category]);
 
@@ -108,10 +136,13 @@ function ReservationForm({ onSubmit }) {
     }
   }, [categories, category, toolName]);
 
+const getAddress = (address) => {
+  return setPickupAddress(address)
+}
+
   const handleChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-
     if (name === 'tool') {
       const selectedTool = tools.find((tool) => tool._id === value);
       setFormData((prev) => ({
@@ -169,7 +200,7 @@ function ReservationForm({ onSubmit }) {
       toolType: formData.toolType,
       tool: formData.toolName,
       quantity: formData.quantity,
-      pickupLocation: formData.pickupLocation,
+      pickupLocation: pickupAddress,
       contactName: formData.contactName,
       contactEmail: formData.contactEmail,
       contactPhone: formData.contactPhone,
@@ -204,7 +235,6 @@ function ReservationForm({ onSubmit }) {
       setLoading(false);
     }
   };
-
   return (
     <div className="max-w-2xl mx-auto p-4 bg-white shadow-2xl rounded-xl border-2 border-red500">
       <h2 className="text-2xl font-bold mb-4 flex items-center text-black">Tool Reservation</h2>
@@ -264,19 +294,28 @@ function ReservationForm({ onSubmit }) {
 
           <div>
             <label className="block mb-1 font-bold text-black">Pickup Location</label>
+
             <select name="pickupLocation" value={formData.pickupLocation} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required
             onInvalid={(e) => e.target.setCustomValidity('Please select a location from the list ')}
             onInput={(e) => e.target.setCustomValidity('')}
             >
               <option value="" className="text-gray-500">
+
+            <select name="pickupLocation" value={formData.pickupLocation} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required>
+              <option value='' className="text-gray-500">
+
                 Locations
               </option>
               {pickupLocations.map((location) => (
                 <option key={location} value={location} className="text-black">
                   {location}
-                </option>
+              </option>
               ))}
             </select>
+          </div>
+
+          <div>
+            <Map className="size-fit aspect-auto" data={data_send} getAddress={getAddress} current_location={formData.pickupLocation}/>
           </div>
 
           <div className="grid md:grid-cols-1 gap-3">
