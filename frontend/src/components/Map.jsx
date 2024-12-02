@@ -8,31 +8,32 @@ const Map = ({data, getAddress, current_location}) => {
   useEffect(() => {
     async function checkIfSelected() {
       setIsLoading(true);
-      try {
-        const recieved_addresses = await data.stores;
-        console.log(recieved_addresses)
-        const selectedCity = await current_location;
-        console.log(selectedCity)
-        if (!selectedCity || selectedCity.length === 0) {
-            let emptyArray = []
-            for(let index of recieved_addresses) {
-                emptyArray.push(index.stores_data)
-            }
-            let fixedArray = emptyArray.flat(Infinity)
-            setGeoLocation(fixedArray)
-        } else {
-          recieved_addresses.forEach((address) => {
-            if (selectedCity === address.location_city) {
-              setGeoLocation(address.stores_data);
-            }
-          });
+      if(geolocation) {
+        try {
+          const recieved_addresses = await data.stores;
+          const selectedCity = await current_location;
+          if (!selectedCity || selectedCity.length === 0) {
+              let emptyArray = []
+              for(let index of recieved_addresses) {
+                  emptyArray.push(index.stores_data)
+              }
+              let fixedArray = emptyArray.flat(Infinity)
+              setGeoLocation(fixedArray)
+          } else {
+            recieved_addresses.forEach((address) => {
+              if (selectedCity === address.location_city) {
+                setGeoLocation(address.stores_data);
+              }
+            });
+          }
+        } catch (error) {
+          console.log({ error: error.message });
+        } finally {
+          setIsLoading(false)
         }
-      } catch (error) {
-        console.log({ error: error.message });
       }
-    }
+      }
     checkIfSelected()
-    setIsLoading(false)
   }, [current_location]);
   return (
     <>
@@ -65,17 +66,3 @@ const Map = ({data, getAddress, current_location}) => {
   );
 };
 export default Map;
-/*
-          return setGeoLocation([
-            {
-              store_name: 'Not selected',
-              geo_location: [54.90547326877105, 23.89033133990547],
-              address: 'Yet to be defined',
-            },
-            {
-              store_name: 'Not selected',
-              geo_location: [55.90547326877105, 24.89033133990547],
-              address: 'Yet to be defined',
-            }
-          ]);
-*/
