@@ -11,6 +11,7 @@ function ReservationForm({ onSubmit }) {
   const { user } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams] = useSearchParams();
+  const [formError, setFormError] = useState('');
   const quantity = parseInt(searchParams.get('quantity')) || 1;
   const category = searchParams.get('category');
   const toolName = searchParams.get('name');
@@ -53,7 +54,7 @@ function ReservationForm({ onSubmit }) {
     startDate: today,
     endDate: today,
     pickupLocation: '',
-    contactName: '',
+    contactName: user.name,
     contactEmail: '',
     contactPhone: ''
   });
@@ -86,6 +87,7 @@ function ReservationForm({ onSubmit }) {
         const response = await fetch('http://localhost:3000/tools');
         const data = await response.json();
         const categorized = {};
+
         data.tools.forEach((product) => {
           const toolType = product.toolType;
           if (!categorized[toolType]) {
@@ -148,6 +150,10 @@ function ReservationForm({ onSubmit }) {
       startDate: newValue.startDate,
       endDate: newValue.endDate
     }));
+
+    if (newValue.startDate && newValue.endDate) {
+      setFormError('');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -163,6 +169,12 @@ function ReservationForm({ onSubmit }) {
 
     if (!validatePhone(formData.contactPhone)) {
       toast.error('Please enter a valid phone number (e.g., +37065551111)');
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.startDate || !formData.endDate) {
+      setFormError('Please select a reservation date.');
       setLoading(false);
       return;
     }
@@ -219,7 +231,15 @@ function ReservationForm({ onSubmit }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block mb-1 font-bold text-black">Select Category</label>
-            <select name="toolType" value={formData.toolType} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required>
+            <select
+              name="toolType"
+              value={formData.toolType}
+              onChange={handleChange}
+              className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black"
+              required
+              onInvalid={(e) => e.target.setCustomValidity('Please select a category from the list')}
+              onInput={(e) => e.target.setCustomValidity('')}
+            >
               <option value="" className="text-gray-500">
                 Categories
               </option>
@@ -240,6 +260,8 @@ function ReservationForm({ onSubmit }) {
               className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black disabled:opacity-50"
               required
               disabled={!formData.toolType}
+              onInvalid={(e) => e.target.setCustomValidity('Please select a tool from the list')}
+              onInput={(e) => e.target.setCustomValidity('')}
             >
               <option value="" className="text-gray-500">
                 Tools
@@ -276,7 +298,8 @@ function ReservationForm({ onSubmit }) {
           </div>
 
           <div className="grid md:grid-cols-1 gap-3">
-            <p className="font-bold">Reservation date</p>
+            <p className="font-bold">Reservation date </p>
+            {formError && <span className="text-red-500">{formError}</span>}
             <Datepicker
               primaryColor={'red'}
               value={{ startDate: formData.startDate, endDate: formData.endDate }}
