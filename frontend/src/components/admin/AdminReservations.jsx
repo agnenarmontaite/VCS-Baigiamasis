@@ -187,7 +187,7 @@ const AdminReservations = () => {
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-xl font-bold">Create New Reservation</h3>
                   <button onClick={() => setShowNewReservationModal(false)} className="text-gray-500 hover:text-gray-700">
-                    ✕
+                    Close
                   </button>
                 </div>
                 <AdminReservationsNewForm onClose={() => setShowNewReservationModal(false)} refreshReservations={fetchReservations} />

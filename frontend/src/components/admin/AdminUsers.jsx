@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import AdminUsersNewForm from './AdminUsersNewForm';
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(12);
+  const [showNewUserModal, setShowNewUserModal] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -49,9 +51,9 @@ const AdminUsers = () => {
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">User Management</h2>
-        <Link to="new" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-          Add New User
-        </Link>
+        <button onClick={() => setShowNewUserModal(true)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+          Create User
+        </button>
       </div>
 
       {loading ? (
@@ -85,10 +87,10 @@ const AdminUsers = () => {
                     <td className="px-6 py-4">{user.rentedTools?.length || 0}</td>
                     <td className="px-6 py-4">{user.reservations?.length || 0}</td>
                     <td className="px-6 py-4 flex gap-2">
-                      <Link to={`edit/${user._id}`} className="text-blue-500 hover:text-blue-700">
+                      <Link to={`edit/${user._id}`} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                         Edit
                       </Link>
-                      <button onClick={() => handleDelete(user._id)} className="text-red-500 hover:text-red-700">
+                      <button onClick={() => handleDelete(user._id)} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
                         Delete
                       </button>
                     </td>
@@ -111,6 +113,21 @@ const AdminUsers = () => {
           </div>
         </>
       )}
+
+      {showNewUserModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-8 rounded-lg max-w-2xl w-full m-4">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold">Create New User</h3>
+              <button onClick={() => setShowNewUserModal(false)} className="text-gray-500 hover:text-gray-700">
+                Close
+              </button>
+            </div>
+            <AdminUsersNewForm onClose={() => setShowNewUserModal(false)} refreshUsers={fetchUsers} />
+          </div>
+        </div>
+      )}
+
       <Outlet context={{ refreshUsers: fetchUsers }} />
     </div>
   );
