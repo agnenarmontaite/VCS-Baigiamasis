@@ -18,7 +18,7 @@ function ToolGrid({ searchCriteria = { searchText: '', category: '' }, limit = '
           }
         }).filter( Boolean )
 
-        console.log(tools)
+        // console.log(tools)
 
         if (limit) {
           setProducts(tools.slice(0, 8))
