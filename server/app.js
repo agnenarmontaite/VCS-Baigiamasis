@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import toolsRoutes from "./api/routes/product.js"
 import reservationRoutes from './api/routes/reservations.js';
+import storesRoutes from './api/routes/stores.js'
 
 import authRoutes from './api/routes/auth.js';
 dotenv.config();
@@ -47,6 +48,7 @@ app.use((req, res, next) => {
 
 app.use('/tools', toolsRoutes)
 app.use('/reservations', reservationRoutes)
+app.use('/stores', storesRoutes)
 
 
 app.use((req, res, next) => {

@@ -42,7 +42,7 @@ function Home() {
     const filteredProducts = products.filter((product) => {
       const matchesSearch = !criteria.searchText || product.name.toLowerCase().includes(criteria.searchText.toLowerCase());
 
-      const matchesCategory = !criteria.category || product.description['Prekės tipas'] === criteria.category;
+      const matchesCategory = !criteria.category || product.description['productType'] === criteria.category;
 
       return matchesSearch && matchesCategory;
     });
