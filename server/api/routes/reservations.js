@@ -1,10 +1,8 @@
 import express from 'express';
 import mongoose from 'mongoose';
-
 import Reservation from '../models/reservations.js';
-import Product from '../models/product.js';
+import Tools from '../models/product.js';
 import User from '../models/User.js';
-
 import auth from '../middleware/auth.js';
 
 const router = express.Router();
@@ -43,8 +41,8 @@ router.get('/', auth, async (req, res) => {
 // POST sukuria nauja rezervacija (naudojant auth middleware)
 router.post('/', auth, async (req, res) => {
   // Is request paimamas productId, quantity ir dateRange
-  const { productId, quantity, dateRange } = req.body;
-  const { userId } = req.body;
+  const { userId } = req.userData;
+  const { productId, toolType, tool, quantity, dateRange, pickupLocation, contactName, contactEmail, contactPhone } = req.body;
 
   // Patikrina ar dateRange teisingai ivestas
   if (!dateRange || !dateRange.from || !dateRange.to) {
@@ -53,35 +51,65 @@ router.post('/', auth, async (req, res) => {
     });
   }
 
-  // Patikrina ar productId ir userId yra valid ObjectId
-  // if (!mongoose.Types.ObjectId.isValid(productId) || !mongoose.Types.ObjectId.isValid(userId)) {
-  //     return res.status(400).json({
-  //         message: 'Invalid productId or userId format'
-  //     });
-  // }
-
   try {
     // Patikrina ar produktas egzistuoja
-    const product = await Product.findById(productId);
+    const product = await Tools.findById(productId);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
+
+    console.log('Received dateRange:', dateRange);
+    console.log('Creating reservation with data:', {
+      productId,
+      toolType,
+      tool,
+      quantity,
+      userId,
+      dateRange,
+      pickupLocation,
+      contactName,
+      contactEmail,
+      contactPhone
+    });
 
     // Sukuria nauja rezervacija
     const reservation = new Reservation({
       _id: new mongoose.Types.ObjectId(),
       product: productId,
+      toolType,
+      tool,
       quantity: quantity || 1, // Jei nera kiekio, naudoja 1 kaip default
-      userId: userId,
+      userId: userId, // Autentifikacijos metu issaugotas userId
+      pickupLocation,
+      contactName,
+      contactEmail,
+      contactPhone,
       dateRange: {
-        from: new Date(),
-        to: new Date()
+        from: dateRange.from,
+        to: dateRange.to
       }
     });
-    console.log(reservation);
+    console.log('Created reservation object:', reservation);
 
     // Iraso rezervacija i duomenu baze
     const savedReservation = await reservation.save();
+
+    await Tools.findByIdAndUpdate(
+      productId,
+      {
+        $push: {
+          reservations: {
+            userId: userId,
+            reservationId: savedReservation._id,
+            dateRange: {
+              startDate: dateRange.from,
+              endDate: dateRange.to
+            }
+          } // Push nauja irankio rezervacija tools sekcijoje
+        }
+      },
+      { new: true } // Grazina atnaujinta user objekta
+    );
 
     // Prideda rezervacijos id i userio rezervaciju sarasa
     await User.findByIdAndUpdate(
@@ -110,7 +138,10 @@ router.post('/', auth, async (req, res) => {
 router.get('/:reservationId', auth, async (req, res) => {
   try {
     // Suranda rezervacija pagal id
-    const reservation = await Reservation.findById(req.params.reservationId).exec();
+    const reservation = await Reservation.findOne({
+      _id: req.params.reservationId,
+      userId: req.userData.userId
+    }).exec();
     if (!reservation) {
       return res.status(404).json({ message: 'Reservation not found' });
     }
