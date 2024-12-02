@@ -16,7 +16,7 @@ import Search from '../components/Search'
 
 const Tools = () => {
     const [searchCriteria, setSearchCriteria] = useState({
-        searchText: '',
+        searchText: useSearchParams()[0].get("searchText") || '',
         category: useSearchParams()[0].get("category") || ''
     });
 
@@ -42,7 +42,7 @@ const Tools = () => {
             <Search searchCriteria={searchCriteria} onSearch={setSearchCriteria} />
             <div className='flex flex-col items-center'>
                 <div
-                    className="flex flex-wrap justify-around content-start gap-2 w-[75%] xs:w-[60%] sm:w-[70%] max-w-[900px] mt-3 md:mt-7"
+                    className="flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4 lg:gap-5 w-[75%] xs:w-[60%] sm:w-[70%] max-w-[900px] mt-3 md:mt-7"
                 >
                     {categories.map((item) => (
                         <div key={item.key} onClick={() => handleSearch(item.key)} className={'text-center border flex flex-col items-center w-[120px] lg:w-[155px] mt-1 border-gray-200 bg-white ' + (searchCriteria.category === item.key ? 'shadow-[0_0_8px_2px_rgba(239,68,68,0.5)]' : 'shadow-md')}>
