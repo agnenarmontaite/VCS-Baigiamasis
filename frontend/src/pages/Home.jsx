@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
-import Search from '../components/Search';
+import { useState } from 'react';
+import HomeSearch from '../components/HomeSearch';
 import ToolGrid from '../components/ToolGrid';
 import TopCategories from '../components/TopCategories';
-import SearchResults from '../components/SearchResults';
 
 function Home() {
   const [searchCriteria, setSearchCriteria] = useState({
@@ -54,9 +53,12 @@ function Home() {
 
   return (
     <main>
-      <Search onSearch={handleSearch} />
+      <HomeSearch onSearch={handleSearch} />
       {searchCriteria.searchText || searchCriteria.category ? ('') : (<TopCategories />)}
-      <ToolGrid searchCriteria={searchCriteria} />
+      <div className='flex flex-col items-center mt-5'>
+        <h2 className="text-[26px] sm:text-[32px] lg:text-[48px] p-[40px] text-center">Most popular tools</h2>
+        <ToolGrid searchCriteria={searchCriteria} />
+      </div>
     </main>
   );
 }
