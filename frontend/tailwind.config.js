@@ -14,7 +14,7 @@ export default {
         'plus-jakarta': ['"Plus Jakarta Sans"', 'sans-serif'],
       },
       screens: {
-        'xs': {'min': '520px', 'max': '639px' },
+        'xs': { 'max': '639px' },
       },
     },
   },
