@@ -123,7 +123,7 @@ router.post('/', auth, async (req, res) => {
       message: 'Reservation created successfully',
       reservation: savedReservation,
       request: {
-        type: 'POST',
+        type: 'GET',
         url: `http://localhost:3000/reservations/${savedReservation._id}`
       }
     });
@@ -150,7 +150,7 @@ router.get('/:reservationId', auth, async (req, res) => {
     res.status(200).json({
       reservation: reservation,
       request: {
-        type: 'UPDATE',
+        type: 'GET',
         url: 'http://localhost:3000/reservations'
       }
     });
@@ -170,7 +170,7 @@ router.delete('/:reservationId', auth, async (req, res) => {
     res.status(200).json({
       message: 'Reservation deleted',
       request: {
-        type: 'DELETE',
+        type: 'POST',
         url: 'http://localhost:3000/reservations',
         body: { productId: 'ID', quantity: 'Number' }
       }
