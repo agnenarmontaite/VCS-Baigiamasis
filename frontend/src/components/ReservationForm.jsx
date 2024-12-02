@@ -104,7 +104,10 @@ function ReservationForm({ onSubmit }) {
             categorized[toolType] = [];
 
           }
+          }
         });
+
+        
 
         setCategories(categorized);
 
@@ -294,16 +297,10 @@ const getAddress = (address) => {
 
           <div>
             <label className="block mb-1 font-bold text-black">Pickup Location</label>
-
             <select name="pickupLocation" value={formData.pickupLocation} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required
             onInvalid={(e) => e.target.setCustomValidity('Please select a location from the list ')}
-            onInput={(e) => e.target.setCustomValidity('')}
-            >
+            onInput={(e) => e.target.setCustomValidity('')}>
               <option value="" className="text-gray-500">
-
-            <select name="pickupLocation" value={formData.pickupLocation} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required>
-              <option value='' className="text-gray-500">
-
                 Locations
               </option>
               {pickupLocations.map((location) => (
