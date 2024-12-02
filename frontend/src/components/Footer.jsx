@@ -23,14 +23,14 @@ const Footer = () => {
                 <div className="nav-links flex justify-center gap-14 md:gap-[150px] lg:gap-[240px] md:mr-[120px]">
                     <div className="footer-navigation-block flex flex-col gap-[21px]">
                         <p className="text-red-500 font-bold">Navigation</p>
-                        <Link to="#about-us">About Us</Link>
-                        <Link to="#">Terms of Use</Link>
-                        <Link to="#">Privacy Policy</Link>
+                        <Link to="/about">About Us</Link>
+                        <Link to="/about">Terms of Use</Link>
+                        <Link to="/about">Privacy Policy</Link>
                     </div>
                     <div className="footer-help-block flex flex-col gap-[21px]">
                         <p className="text-red-500 font-bold">Help</p>
-                        <Link to="#">FAQ</Link>
-                        <Link to="#contact">Contact</Link>
+                        <Link to="/about">FAQ</Link>
+                        <Link to="/contact">Contact</Link>
                     </div>
                 </div>
             </div>

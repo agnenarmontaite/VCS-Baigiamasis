@@ -5,8 +5,6 @@ import TopCategories from '../components/TopCategories';
 import SearchResults from '../components/SearchResults';
 
 function Home() {
-  const [products, setProducts] = useState([]);
-  const [searchResults, setSearchResults] = useState(null);
   const [searchCriteria, setSearchCriteria] = useState({
     searchText: '',
     category: ''
@@ -56,14 +54,8 @@ function Home() {
   return (
     <main>
       <Search onSearch={handleSearch} />
-      {searchResults && isSearchActive ? (
-        <SearchResults results={searchResults} />
-      ) : (
-        <>
-          <TopCategories />
-          <ToolGrid products={products} isSearchResult={false} />
-        </>
-      )}
+      {searchCriteria.searchText || searchCriteria.category ? ('') : (<TopCategories />)}
+      <ToolGrid searchCriteria={searchCriteria} />
     </main>
   );
 }

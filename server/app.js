@@ -4,13 +4,12 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import toolsRoutes from "./api/routes/product.js"
+import toolsRoutes from './api/routes/product.js';
 import reservationRoutes from './api/routes/reservations.js';
 import storesRoutes from './api/routes/stores.js'
 
 import authRoutes from './api/routes/auth.js';
 dotenv.config();
-
 
 const app = express();
 
