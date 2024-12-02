@@ -9,6 +9,7 @@ function Home() {
     category: ''
   });
   const [isSearchActive, setIsSearchActive] = useState(false);
+  const [products, setProducts] = useState('')
 
   useEffect(() => {
     fetch('http://localhost:3000/tools')
