@@ -13,7 +13,8 @@ export const procureTools = async (req, res, next) => {
             name: doc.description.nameRetail,
             price: doc.description.basePrice,
             description: doc.description.details,
-            images: doc.description.imageURIs
+            images: doc.description.imageURIs,
+            toolType: doc.toolType
           };
         })
       };

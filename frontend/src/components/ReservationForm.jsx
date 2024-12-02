@@ -15,30 +15,17 @@ function ReservationForm({ onSubmit }) {
   const toolName = searchParams.get('name');
   const { id } = useParams();
   const [pickupLocations, setPickupLocations] = useState([]);
-  const [data_send, setData_send] = useState([])
-  const [pickupAddress, setPickupAddress] = useState("")
-
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
-
-  const [formData, setFormData] = useState({
-    toolType: category || '',
-    tool: id,
-    toolName: toolName || '',
-    quantity: quantity,
-    startDate: null,
-    endDate: null,
-    pickupLocation: '',
-    contactName: '',
-    contactEmail: '',
-    contactPhone: ''
-  });
-
+  const [data_send, setData_send] = useState([]);
+  const [pickupAddress, setPickupAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState({});
   const [tools, setTools] = useState([]);
   const [fetchError, setFetchError] = useState(null);
+  const today = new Date();
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
 
   const disabledDates = [
     {
@@ -50,94 +37,104 @@ function ReservationForm({ onSubmit }) {
       endDate: new Date(2024, 11, 25)
     }
   ];
+
+  const [formData, setFormData] = useState(() => ({
+    toolType: '',
+    tool: '',
+    toolName: '',
+    quantity: quantity,
+    startDate: today,
+    endDate: today,
+    pickupLocation: '',
+    contactName: '',
+    contactEmail: '',
+    contactPhone: ''
+  }));
+
+  const getAddress = (address) => setPickupAddress(address);
+
   useEffect(() => {
-    const fecthStoresLocations = async () => {
+    const fetchStoresLocations = async () => {
       setIsLoading(true);
-      try{
-        const response = await fetch('http://localhost:3000/stores')
-        if(!response.ok) {
-          throw new Error(`HTTP! error! status: ${response.status}` )
-        }
-        const data = await response.json()
-        let pullArray = []
-        if(pullArray > 0) {
-          pullArray = []
-        }
-        data.stores.forEach((store) => {
-          pullArray.push(store.location_city)
-        })
-        setPickupLocations(pullArray)
-        setData_send(data)
+      try {
+        const response = await fetch('http://localhost:3000/stores');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        const pullArray = data.stores.map((store) => store.location_city);
+        setPickupLocations(pullArray);
+        setData_send(data);
       } catch (error) {
-        console.error('Error fetching stores:', error);
         setFetchError('Failed to load stores. Please try again later.');
       } finally {
+        setIsLoading(false);
       }
-    }
-    fecthStoresLocations()
+    };
+
+    fetchStoresLocations();
+  }, []);
+
+  useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await fetch('http://localhost:3000/tools');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
         const data = await response.json();
+        console.log('Fetched tools:', data.tools);
+
         const categorized = {};
         data.tools.forEach((product) => {
-          const toolType = product.description['productType'];
+          const toolType = product.toolType;
+          console.log('Processing tool:', {
+            name: product.name,
+            toolType,
+            id: product._id
+          });
+
           if (!categorized[toolType]) {
             categorized[toolType] = [];
           }
           categorized[toolType].push({
             _id: product._id,
-            name: product.name,
-            description: product.description
+            name: product.description.nameRetail,
+            description: product.description,
+            toolType: toolType
           });
         });
 
+        console.log('Categorized data:', categorized);
         setCategories(categorized);
 
-        // If category exists, set the tools for that category
-        if (category && categorized[category]) {
-          setTools(categorized[category]);
+        if (category && toolName) {
+          const categoryTools = categorized[category];
+          if (categoryTools) {
+            setTools(categoryTools);
+            const selectedTool = categoryTools.find((t) => t.name === toolName);
+            if (selectedTool) {
+              setFormData((prev) => ({
+                ...prev,
+                toolType: category,
+                tool: id,
+                toolName: toolName
+              }));
+            }
+          }
         }
       } catch (error) {
-        console.error('Error fetching products:', error);
-        setFetchError('Failed to load products. Please try again later.');
-      } finally {
-        setIsLoading(false);
+        setFetchError('Failed to load products');
       }
     };
+
     fetchProducts();
-  }, [category]);
-
-  useEffect(() => {
-    if (categories[category]) {
-      setTools(categories[category]);
-      const selectedTool = categories[category].find((tool) => tool.name === toolName);
-      if (selectedTool) {
-        setFormData((prev) => ({
-          ...prev,
-          tool: selectedTool._id,
-          toolName: selectedTool.name
-        }));
-      }
-    }
-  }, [categories, category, toolName]);
-
-const getAddress = (address) => {
-  return setPickupAddress(address)
-}
+  }, [category, toolName, id]);
 
   const handleChange = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
+    const { name, value } = e.target;
     if (name === 'tool') {
       const selectedTool = tools.find((tool) => tool._id === value);
       setFormData((prev) => ({
         ...prev,
         tool: value,
-        toolName: selectedTool ? selectedTool.name : ''
+        toolName: selectedTool ? selectedTool.name : '',
+        toolType: selectedTool ? selectedTool.toolType : prev.toolType
       }));
     } else {
       setFormData((prev) => ({
@@ -163,7 +160,6 @@ const getAddress = (address) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -173,7 +169,7 @@ const getAddress = (address) => {
     }
 
     const payload = {
-      productId: formData.tool, // This is the MongoDB _id
+      productId: formData.tool,
       toolType: formData.toolType,
       tool: formData.toolName,
       quantity: formData.quantity,
@@ -202,16 +198,15 @@ const getAddress = (address) => {
         onSubmit(result);
       } else {
         const errorData = await response.json();
-        console.error('Failed to submit reservation:', errorData.message);
         alert('Failed to submit reservation. Please try again.');
       }
     } catch (error) {
-      console.error('Error:', error);
       alert('An error occurred while submitting your reservation. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <div className="max-w-2xl mx-auto p-4 bg-white shadow-2xl rounded-xl border-2 border-red500">
       <h2 className="text-2xl font-bold mb-4 flex items-center text-black">Tool Reservation</h2>
@@ -266,19 +261,19 @@ const getAddress = (address) => {
           <div>
             <label className="block mb-1 font-bold text-black">Pickup Location</label>
             <select name="pickupLocation" value={formData.pickupLocation} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required>
-              <option value='' className="text-gray-500">
+              <option value="" className="text-gray-500">
                 Locations
               </option>
               {pickupLocations.map((location) => (
                 <option key={location} value={location} className="text-black">
                   {location}
-              </option>
+                </option>
               ))}
             </select>
           </div>
 
           <div>
-            <Map className="size-fit aspect-auto" data={data_send} getAddress={getAddress} current_location={formData.pickupLocation}/>
+            <Map className="size-fit aspect-auto" data={data_send} getAddress={getAddress} current_location={formData.pickupLocation} />
           </div>
 
           <div className="grid md:grid-cols-1 gap-3">
@@ -292,6 +287,9 @@ const getAddress = (address) => {
               showFooter={true}
               disabledDates={disabledDates}
               className={''}
+              timezone="UTC"
+              startWeekOn="monday"
+              startFrom={new Date()}
               configs={{
                 shortcuts: {
                   today: {
