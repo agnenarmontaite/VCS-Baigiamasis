@@ -16,6 +16,7 @@ import AboutUs from './pages/AboutUs';
 import TermsOfUse from './components/TermsOfUse';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import FAQ from './components/FAQ';
+import Reservation from './pages/Reservation';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
           <Route path="/terms" element={<TermsOfUse/>}/>
           <Route path="/privacy" element={<PrivacyPolicy/>}/>
           <Route path="/faq" element={<FAQ/>}/>
+          <Route path="/reservations" element={<Reservation/>}/>   
         </Routes>
       </div>
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} newestOnTop={true} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light" />

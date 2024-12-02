@@ -15,7 +15,7 @@ router.get('/', auth, async (req, res) => {
   try {
     // Suranda visas rezervacijas pagal userId
     const reservations = await Reservation.find({ userId })
-      .select('product quantity dateRange _id') // Pasirenkame tik tam tikrus laukus
+      .select('product quantity dateRange _id tool status pickupLocation contactName contactEmail contactPhone') // Pasirenkame tik tam tikrus laukus
       .exec();
 
     // Grazina rezultata su rezervaciju sarasu
@@ -24,7 +24,13 @@ router.get('/', auth, async (req, res) => {
       reservations: reservations.map((reservation) => ({
         _id: reservation._id,
         product: reservation.product,
+        tool: reservation.tool,
         quantity: reservation.quantity,
+        dateRange: reservation.dateRange,
+        pickupLocation: reservation.pickupLocation,
+        contactEmail: reservation.contactEmail,
+        contactPhone: reservation.contactPhone,
+        status: reservation.status,
         dateRange: reservation.dateRange,
         request: {
           type: 'GET',
