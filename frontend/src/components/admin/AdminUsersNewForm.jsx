@@ -24,25 +24,33 @@ const AdminUsersNewForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch('http://localhost:3000/api/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      });
+    const token = localStorage.getItem('token');
 
-      if (response.ok) {
-        refreshUsers();
-        toast.success('User created successfully');
-        navigate('/admin/users');
-      } else {
-        const error = await response.json();
-        toast.error(error.message || 'Failed to create user');
-      }
-    } catch (error) {
-      toast.error('Failed to create user');
+    const userData = {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      phoneNumber: formData.phoneNumber,
+      dateOfBirth: formData.dateOfBirth,
+      address: formData.address,
+      role: formData.role
+    };
+
+    const response = await fetch('http://localhost:3000/auth/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(userData)
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      toast.success('User created successfully!');
+      refreshUsers(); // Refresh the users list
+      navigate('/admin/users'); // Navigate back to users list
     }
   };
 

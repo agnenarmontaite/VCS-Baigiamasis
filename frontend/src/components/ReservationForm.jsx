@@ -5,6 +5,7 @@ import { useContext } from 'react';
 import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import Map from './Map';
+import { toast } from 'react-toastify';
 
 function ReservationForm({ onSubmit }) {
   const { user } = useContext(AuthContext);
@@ -23,6 +24,12 @@ function ReservationForm({ onSubmit }) {
   const [fetchError, setFetchError] = useState(null);
   const today = new Date();
 
+  const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+
+  const validatePhone = (phoneNumber) => {
+    return phoneRegex.test(phoneNumber);
+  };
+
   if (!user) {
     return <Navigate to="/login" />;
   }
@@ -38,7 +45,7 @@ function ReservationForm({ onSubmit }) {
     }
   ];
 
-  const [formData, setFormData] = useState(() => ({
+  const [formData, setFormData] = useState({
     toolType: '',
     tool: '',
     toolName: '',
@@ -49,7 +56,7 @@ function ReservationForm({ onSubmit }) {
     contactName: '',
     contactEmail: '',
     contactPhone: ''
-  }));
+  });
 
   const getAddress = (address) => setPickupAddress(address);
 
@@ -78,45 +85,31 @@ function ReservationForm({ onSubmit }) {
       try {
         const response = await fetch('http://localhost:3000/tools');
         const data = await response.json();
-        console.log('Fetched tools:', data.tools);
-
         const categorized = {};
         data.tools.forEach((product) => {
           const toolType = product.toolType;
-          console.log('Processing tool:', {
-            name: product.name,
-            toolType,
-            id: product._id
-          });
-
           if (!categorized[toolType]) {
             categorized[toolType] = [];
           }
           categorized[toolType].push({
             _id: product._id,
-            name: product.description.nameRetail,
-            description: product.description,
+            name: product.name,
             toolType: toolType
           });
         });
 
-        console.log('Categorized data:', categorized);
         setCategories(categorized);
+        const exactTool = data.tools.find((t) => t.name.trim() === toolName?.trim());
 
-        if (category && toolName) {
-          const categoryTools = categorized[category];
-          if (categoryTools) {
-            setTools(categoryTools);
-            const selectedTool = categoryTools.find((t) => t.name === toolName);
-            if (selectedTool) {
-              setFormData((prev) => ({
-                ...prev,
-                toolType: category,
-                tool: id,
-                toolName: toolName
-              }));
-            }
-          }
+        if (exactTool) {
+          setTools(categorized[exactTool.toolType] || []);
+          setFormData((prev) => ({
+            ...prev,
+            toolType: exactTool.toolType,
+            tool: exactTool._id,
+            toolName: exactTool.name,
+            quantity: quantity
+          }));
         }
       } catch (error) {
         setFetchError('Failed to load products');
@@ -124,7 +117,7 @@ function ReservationForm({ onSubmit }) {
     };
 
     fetchProducts();
-  }, [category, toolName, id]);
+  }, [category, toolName, quantity]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -163,7 +156,13 @@ function ReservationForm({ onSubmit }) {
     const token = localStorage.getItem('token');
 
     if (!token) {
-      alert('You must be logged in to make a reservation.');
+      toast.error('You must be logged in to make a reservation.');
+      setLoading(false);
+      return;
+    }
+
+    if (!validatePhone(formData.contactPhone)) {
+      toast.error('Please enter a valid phone number (e.g., +37065551111)');
       setLoading(false);
       return;
     }
@@ -198,10 +197,10 @@ function ReservationForm({ onSubmit }) {
         onSubmit(result);
       } else {
         const errorData = await response.json();
-        alert('Failed to submit reservation. Please try again.');
+        toast.error('Failed to submit reservation. Please try again.');
       }
     } catch (error) {
-      alert('An error occurred while submitting your reservation. Please try again.');
+      toast.error('An error occurred while submitting your reservation. Please try again.');
     } finally {
       setLoading(false);
     }

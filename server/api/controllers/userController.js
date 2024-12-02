@@ -16,11 +16,19 @@ const getUsers = async (req, res) => {
 // Get single user
 const getUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select('-password');
+    const user = await User.findById(req.params.id);
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.json(user);
+
+    const userData = {
+      name: user.name,
+      email: user.email,
+      phoneNumber: user.phoneNumber
+    };
+
+    res.json(userData);
   } catch (error) {
     res.status(500).json({ message: 'Server Error' });
   }
