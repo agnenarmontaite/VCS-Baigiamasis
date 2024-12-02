@@ -11,17 +11,17 @@ function Admin() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Link to="tools">
           <div className="p-4 bg-white rounded-t">
-            <h3 className="font-bold mb-2">Tvarkyti įrankius</h3>
+            <h3 className="font-bold mb-2">Tools</h3>
           </div>
         </Link>
         <Link to="reservations">
           <div className="p-4 bg-white rounded-t shadow-inner">
-            <h3 className="font-bold mb-2">Rezervacijos</h3>
+            <h3 className="font-bold mb-2">Reservations</h3>
           </div>
         </Link>
         <Link to="users">
           <div className="p-4 bg-white rounded-t">
-            <h3 className="font-bold mb-2">Vartotojai</h3>
+            <h3 className="font-bold mb-2">Users</h3>
           </div>
         </Link>
       </div>

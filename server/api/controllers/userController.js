@@ -25,7 +25,10 @@ const getUser = async (req, res) => {
     const userData = {
       name: user.name,
       email: user.email,
-      phoneNumber: user.phoneNumber
+      phoneNumber: user.phoneNumber,
+      dateOfBirth: user.dateOfBirth,
+      address: user.address,
+      role: user.role
     };
 
     res.json(userData);

@@ -20,14 +20,18 @@ const AdminUsersEditForm = () => {
   const [reservationsPerPage] = useState(5);
 
   useEffect(() => {
-    fetchUser();
-    fetchUserReservations();
+    const initializeData = async () => {
+      await Promise.all([fetchUser(), fetchUserReservations()]);
+      setLoading(false);
+    };
+    initializeData();
   }, [id]);
 
   const fetchUser = async () => {
     try {
       const response = await fetch(`http://localhost:3000/api/users/${id}`);
       const data = await response.json();
+
       setFormData({
         name: data.name,
         email: data.email,
@@ -36,7 +40,6 @@ const AdminUsersEditForm = () => {
         address: data.address,
         role: data.role
       });
-      setLoading(false);
     } catch (error) {
       toast.error('Failed to fetch user data');
       navigate('/admin/users');
@@ -55,10 +58,11 @@ const AdminUsersEditForm = () => {
   };
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -77,37 +81,32 @@ const AdminUsersEditForm = () => {
         toast.success('User updated successfully');
         navigate('/admin/users');
       } else {
-        const error = await response.json();
-        toast.error(error.message || 'Failed to update user');
+        throw new Error('Failed to update user');
       }
     } catch (error) {
-      toast.error('Failed to update user');
+      toast.error(error.message || 'Failed to update user');
     }
-  };
-
-  const handleEditReservation = async (reservationId) => {
-    toast.info('Edit reservation functionality coming soon');
   };
 
   const handleDeleteReservation = async (reservationId) => {
     if (window.confirm('Are you sure you want to delete this reservation?')) {
       try {
         const response = await fetch(`http://localhost:3000/reservations/${reservationId}`, {
-          method: 'DELETE'
+          method: 'DELETE',
+          credentials: 'include'
         });
-        if (response.ok) {
-          setUserReservations(userReservations.filter((res) => res._id !== reservationId));
-          toast.success('Reservation deleted successfully');
-        }
+
+        if (!response.ok) throw new Error('Failed to delete reservation');
+
+        setUserReservations((prev) => prev.filter((res) => res._id !== reservationId));
+        toast.success('Reservation deleted successfully');
       } catch (error) {
-        toast.error('Failed to delete reservation');
+        toast.error(error.message);
       }
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
 
   const indexOfLastReservation = currentPage * reservationsPerPage;
   const indexOfFirstReservation = indexOfLastReservation - reservationsPerPage;

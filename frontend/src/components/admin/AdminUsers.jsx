@@ -5,6 +5,8 @@ import { toast } from 'react-toastify';
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [usersPerPage] = useState(12);
 
   useEffect(() => {
     fetchUsers();
@@ -38,6 +40,11 @@ const AdminUsers = () => {
     }
   };
 
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(users.length / usersPerPage);
+
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
@@ -50,45 +57,59 @@ const AdminUsers = () => {
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white shadow-md rounded">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-6 py-3 text-left">Name</th>
-                <th className="px-6 py-3 text-left">Email</th>
-                <th className="px-6 py-3 text-left">Phone Number</th>
-                <th className="px-6 py-3 text-left">Date of Birth</th>
-                <th className="px-6 py-3 text-left">Address</th>
-                <th className="px-6 py-3 text-left">Role</th>
-                <th className="px-6 py-3 text-left">Rented Tools</th>
-                <th className="px-6 py-3 text-left">Reservations</th>
-                <th className="px-6 py-3 text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => (
-                <tr key={user._id} className="border-b hover:bg-gray-50">
-                  <td className="px-6 py-4">{user.name}</td>
-                  <td className="px-6 py-4">{user.email}</td>
-                  <td className="px-6 py-4">{user.phoneNumber}</td>
-                  <td className="px-6 py-4">{new Date(user.dateOfBirth).toLocaleDateString()}</td>
-                  <td className="px-6 py-4">{user.address}</td>
-                  <td className="px-6 py-4">{user.role}</td>
-                  <td className="px-6 py-4">{user.rentedTools?.length || 0}</td>
-                  <td className="px-6 py-4">{user.reservations?.length || 0}</td>
-                  <td className="px-6 py-4 flex gap-2">
-                    <Link to={`edit/${user._id}`} className="text-blue-500 hover:text-blue-700">
-                      Edit
-                    </Link>
-                    <button onClick={() => handleDelete(user._id)} className="text-red-500 hover:text-red-700">
-                      Delete
-                    </button>
-                  </td>
+        <>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white shadow-md rounded">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="px-6 py-3 text-left">Name</th>
+                  <th className="px-6 py-3 text-left">Email</th>
+                  <th className="px-6 py-3 text-left">Phone Number</th>
+                  <th className="px-6 py-3 text-left">Date of Birth</th>
+                  <th className="px-6 py-3 text-left">Address</th>
+                  <th className="px-6 py-3 text-left">Role</th>
+                  <th className="px-6 py-3 text-left">Rented Tools</th>
+                  <th className="px-6 py-3 text-left">Reservations</th>
+                  <th className="px-6 py-3 text-left">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {currentUsers.map((user) => (
+                  <tr key={user._id} className="border-b hover:bg-gray-50">
+                    <td className="px-6 py-4">{user.name}</td>
+                    <td className="px-6 py-4">{user.email}</td>
+                    <td className="px-6 py-4">{user.phoneNumber}</td>
+                    <td className="px-6 py-4">{new Date(user.dateOfBirth).toLocaleDateString()}</td>
+                    <td className="px-6 py-4">{user.address}</td>
+                    <td className="px-6 py-4">{user.role}</td>
+                    <td className="px-6 py-4">{user.rentedTools?.length || 0}</td>
+                    <td className="px-6 py-4">{user.reservations?.length || 0}</td>
+                    <td className="px-6 py-4 flex gap-2">
+                      <Link to={`edit/${user._id}`} className="text-blue-500 hover:text-blue-700">
+                        Edit
+                      </Link>
+                      <button onClick={() => handleDelete(user._id)} className="text-red-500 hover:text-red-700">
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-4 flex justify-center gap-2">
+            <button onClick={() => setCurrentPage((prev) => prev - 1)} disabled={currentPage === 1} className="px-3 py-1 border rounded hover:bg-gray-100 disabled:opacity-50">
+              Previous
+            </button>
+            <span className="px-3 py-1">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button onClick={() => setCurrentPage((prev) => prev + 1)} disabled={currentPage === totalPages} className="px-3 py-1 border rounded hover:bg-gray-100 disabled:opacity-50">
+              Next
+            </button>
+          </div>
+        </>
       )}
       <Outlet context={{ refreshUsers: fetchUsers }} />
     </div>

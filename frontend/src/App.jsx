@@ -10,6 +10,7 @@ import AdminToolNewForm from './components/admin/AdminToolNewForm';
 import AdminTools from './components/admin/AdminTools';
 import AdminToolEditForm from './components/admin/AdminToolEditForm';
 import AdminReservationsEditForm from './components/admin/AdminReservationsEditForm';
+import AdminReservationsNewForm from './components/admin/AdminReservationsNewForm';
 import AdminUsersEditForm from './components/admin/AdminUsersEditForm';
 import AdminUsersNewForm from './components/admin/AdminUsersNewForm';
 import Login from './pages/auth/Login';
@@ -42,7 +43,7 @@ function App() {
             </Route>
             <Route path="reservations" element={<AdminReservations />}>
               <Route path="edit/:id" element={<AdminReservationsEditForm />} />
-              {/* <Route path="new" element={< AdminReservationsNewForm/>} /> */}
+              <Route path="new" element={< AdminReservationsNewForm/>} />
             </Route>
             <Route path="users" element={<AdminUsers />}>
               <Route path="edit/:id" element={<AdminUsersEditForm />} />
