@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-const AdminReservationsNewForm = ({ onClose}) => {
+const AdminReservationsNewForm = ({ onClose }) => {
   const navigate = useNavigate();
   const [tools, setTools] = useState([]);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     tool: '',
+    userId: '',
     contactName: '',
     contactEmail: '',
     contactPhone: '',
@@ -19,6 +20,23 @@ const AdminReservationsNewForm = ({ onClose}) => {
     quantity: 1
   });
   const [locations, setLocations] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [isManualEntry, setIsManualEntry] = useState(false);
+
+  useEffect(() => {
+    fetch('http://localhost:3000/api/users', {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setUsers(data);
+      })
+      .catch((err) => {
+        toast.error('Failed to fetch users');
+      });
+  }, []);
 
   useEffect(() => {
     fetch('http://localhost:3000/stores', {
@@ -58,6 +76,7 @@ const AdminReservationsNewForm = ({ onClose}) => {
     e.preventDefault();
     const requestData = {
       productId: formData.tool,
+      userId: formData.userId,
       contactName: formData.contactName,
       contactEmail: formData.contactEmail,
       contactPhone: formData.contactPhone,
@@ -124,6 +143,18 @@ const AdminReservationsNewForm = ({ onClose}) => {
             {tools.map((tool) => (
               <option key={tool._id} value={tool._id}>
                 {tool.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block mb-1">User (Optional)</label>
+          <select name="userId" value={formData.userId} onChange={handleChange} className="w-full p-2 border rounded">
+            <option value="">Select a user</option>
+            {users.map((user) => (
+              <option key={user._id} value={user._id}>
+                {user.name} - {user.email}
               </option>
             ))}
           </select>
