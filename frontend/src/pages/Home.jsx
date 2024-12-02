@@ -9,7 +9,7 @@ function Home() {
     <main>
       <HomeSearch />
       <TopCategories />
-      <div className='flex flex-col items-center mt-5'>
+      <div className='flex flex-col items-center'>
         <h2 className="text-[26px] sm:text-[32px] lg:text-[48px] p-[40px] text-center">Most popular tools</h2>
         <ToolGrid limit={8} />
       </div>

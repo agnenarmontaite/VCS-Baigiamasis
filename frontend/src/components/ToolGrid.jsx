@@ -62,7 +62,7 @@ function ToolGrid({ searchCriteria = { searchText: '', category: '' }, limit = '
   };
 
   return (
-    <div className="flex flex-col items-center my-7 w-[90%] max-w-[1500px]">
+    <div className="flex flex-col items-center mb-7 w-[90%] max-w-[1500px]">
       {isSearchActive ? <h2 className="text-[20px] text-center p-1 md:p-6">Found {searchResults.length} results</h2> : ''}
       <div className="flex justify-center items-center">
         <div className="flex flex-wrap justify-center content-stretch gap-2">
