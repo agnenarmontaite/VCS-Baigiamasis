@@ -14,8 +14,9 @@ router.get('/', auth, async (req, res) => {
 
   try {
     // Suranda visas rezervacijas pagal userId
-    const reservations = await Reservation.find({ userId })
-      .select('product quantity dateRange _id tool status pickupLocation contactName contactEmail contactPhone') // Pasirenkame tik tam tikrus laukus
+    const reservations = await Reservation.find()
+      .populate('product', 'description nameRetail')
+      .select('product quantity dateRange _id toolType tool status pickupLocation contactName contactEmail contactPhone')
       .exec();
 
     // Grazina rezultata su rezervaciju sarasu
@@ -24,14 +25,15 @@ router.get('/', auth, async (req, res) => {
       reservations: reservations.map((reservation) => ({
         _id: reservation._id,
         product: reservation.product,
-        tool: reservation.tool,
         quantity: reservation.quantity,
         dateRange: reservation.dateRange,
+        toolType: reservation.toolType,
+        tool: reservation.tool,
         pickupLocation: reservation.pickupLocation,
+        contactName: reservation.contactName,
         contactEmail: reservation.contactEmail,
         contactPhone: reservation.contactPhone,
         status: reservation.status,
-        dateRange: reservation.dateRange,
         request: {
           type: 'GET',
           url: `http://localhost:3000/reservations/${reservation._id}`
@@ -140,6 +142,22 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
+// Traukiam rezervacijas pagal user ID
+router.get('/user/:userId', async (req, res) => {
+  try {
+    const reservations = await Reservation.find({
+      userId: req.params.userId,
+      status: { $in: ['Pending', 'Active'] } // Only get active and pending reservations
+    })
+      .populate('product', 'description.nameRetail')
+      .exec();
+
+    res.status(200).json(reservations);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET vienos rezervacijos informacija pagal id
 router.get('/:reservationId', auth, async (req, res) => {
   try {
@@ -183,6 +201,28 @@ router.delete('/:reservationId', auth, async (req, res) => {
     });
   } catch (err) {
     // Grazina klaidos pranesima
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PUT rezervaciju tvirtinimas
+router.put('/:reservationId', async (req, res) => {
+  try {
+    const { status } = req.body;
+    const reservation = await Reservation.findById(req.params.reservationId);
+
+    if (!reservation) {
+      return res.status(404).json({ message: 'Reservation not found' });
+    }
+
+    reservation.status = status;
+    const updatedReservation = await reservation.save();
+
+    res.status(200).json({
+      message: 'Reservation status updated successfully',
+      reservation: updatedReservation
+    });
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });

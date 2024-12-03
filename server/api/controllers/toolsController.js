@@ -13,7 +13,8 @@ export const procureTools = async (req, res, next) => {
             name: doc.description.nameRetail,
             price: doc.description.basePrice,
             description: doc.description.details,
-            images: doc.description.imageURIs
+            images: doc.description.imageURIs,
+            toolType: doc.toolType
           };
         })
       };
@@ -26,8 +27,9 @@ export const procureTool = async (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid) {
     return res.status(400).json({ error: 'No such tool was found' });
   }
+
   Tools.findById(id)
-    .select('_id description')
+    .select('_id description toolType') // Added toolType to selection
     .exec()
     .then((doc) => {
       console.log('From database', doc);
@@ -78,8 +80,8 @@ export const reformTool = async (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid) {
     return res.status(400).json({ error: 'No such tool was found' });
   }
-  const updateOps = req.body
-  Tools.findByIdAndUpdate({_id: id}, updateOps, {new: true})
+  const updateOps = req.body;
+  Tools.findByIdAndUpdate({ _id: id }, updateOps, { new: true })
     .exec()
     .then((result) => {
       res.status(200).json({
