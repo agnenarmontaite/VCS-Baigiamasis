@@ -4,37 +4,36 @@ import Datepicker from 'react-tailwindcss-datepicker';
 import { useContext } from 'react';
 import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import Map from './Map';
+import { toast } from 'react-toastify';
 
 function ReservationForm({ onSubmit }) {
   const { user } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams] = useSearchParams();
+  const [formError, setFormError] = useState('');
   const quantity = parseInt(searchParams.get('quantity')) || 1;
   const category = searchParams.get('category');
   const toolName = searchParams.get('name');
   const { id } = useParams();
-
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
-
-  const [formData, setFormData] = useState({
-    toolType: category || '',
-    tool: id,
-    toolName: toolName || '',
-    quantity: quantity,
-    startDate: null,
-    endDate: null,
-    pickupLocation: '',
-    contactName: '',
-    contactEmail: '',
-    contactPhone: ''
-  });
-
+  const [pickupLocations, setPickupLocations] = useState([]);
+  const [data_send, setData_send] = useState([]);
+  const [pickupAddress, setPickupAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState({});
   const [tools, setTools] = useState([]);
   const [fetchError, setFetchError] = useState(null);
+  const today = new Date();
+
+  const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+
+  const validatePhone = (phoneNumber) => {
+    return phoneRegex.test(phoneNumber);
+  };
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
 
   const disabledDates = [
     {
@@ -47,72 +46,90 @@ function ReservationForm({ onSubmit }) {
     }
   ];
 
-  const pickupLocations = ['Vilnius', 'Kaunas', 'Klaipėda', 'Šiauliai', 'Panevėžys'];
+  const [formData, setFormData] = useState({
+    toolType: '',
+    tool: '',
+    toolName: '',
+    quantity: quantity,
+    startDate: today,
+    endDate: today,
+    pickupLocation: '',
+    contactName: user.name,
+    contactEmail: '',
+    contactPhone: ''
+  });
+
+  const getAddress = (address) => setPickupAddress(address);
+
+  useEffect(() => {
+    const fetchStoresLocations = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch('http://localhost:3000/stores');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        const pullArray = data.stores.map((store) => store.location_city);
+        setPickupLocations(pullArray);
+        setData_send(data);
+      } catch (error) {
+        setFetchError('Failed to load stores. Please try again later.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchStoresLocations();
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      setIsLoading(true);
       try {
         const response = await fetch('http://localhost:3000/tools');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
         const data = await response.json();
-
         const categorized = {};
+
         data.tools.forEach((product) => {
-          const toolType = product.description['Prekės tipas'];
+          const toolType = product.toolType;
           if (!categorized[toolType]) {
             categorized[toolType] = [];
           }
           categorized[toolType].push({
             _id: product._id,
             name: product.name,
-            description: product.description
+            toolType: toolType
           });
         });
 
         setCategories(categorized);
+        const exactTool = data.tools.find((t) => t.name.trim() === toolName?.trim());
 
-        // If category exists, set the tools for that category
-        if (category && categorized[category]) {
-          setTools(categorized[category]);
+        if (exactTool) {
+          setTools(categorized[exactTool.toolType] || []);
+          setFormData((prev) => ({
+            ...prev,
+            toolType: exactTool.toolType,
+            tool: exactTool._id,
+            toolName: exactTool.name,
+            quantity: quantity
+          }));
         }
       } catch (error) {
-        console.error('Error fetching products:', error);
-        setFetchError('Failed to load products. Please try again later.');
-      } finally {
-        setIsLoading(false);
+        setFetchError('Failed to load products');
       }
     };
 
     fetchProducts();
-  }, [category]);
-
-  useEffect(() => {
-    if (categories[category]) {
-      setTools(categories[category]);
-      const selectedTool = categories[category].find((tool) => tool.name === toolName);
-      if (selectedTool) {
-        setFormData((prev) => ({
-          ...prev,
-          tool: selectedTool._id,
-          toolName: selectedTool.name
-        }));
-      }
-    }
-  }, [categories, category, toolName]);
+  }, [category, toolName, quantity]);
 
   const handleChange = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-
+    const { name, value } = e.target;
     if (name === 'tool') {
       const selectedTool = tools.find((tool) => tool._id === value);
       setFormData((prev) => ({
         ...prev,
         tool: value,
-        toolName: selectedTool ? selectedTool.name : ''
+        toolName: selectedTool ? selectedTool.name : '',
+        toolType: selectedTool ? selectedTool.toolType : prev.toolType
       }));
     } else {
       setFormData((prev) => ({
@@ -133,26 +150,41 @@ function ReservationForm({ onSubmit }) {
       startDate: newValue.startDate,
       endDate: newValue.endDate
     }));
+
+    if (newValue.startDate && newValue.endDate) {
+      setFormError('');
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     const token = localStorage.getItem('token');
 
     if (!token) {
-      alert('You must be logged in to make a reservation.');
+      toast.error('You must be logged in to make a reservation.');
+      setLoading(false);
+      return;
+    }
+
+    if (!validatePhone(formData.contactPhone)) {
+      toast.error('Please enter a valid phone number (e.g., +37065551111)');
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.startDate || !formData.endDate) {
+      setFormError('Please select a reservation date.');
       setLoading(false);
       return;
     }
 
     const payload = {
-      productId: formData.tool, // This is the MongoDB _id
+      productId: formData.tool,
       toolType: formData.toolType,
       tool: formData.toolName,
       quantity: formData.quantity,
-      pickupLocation: formData.pickupLocation,
+      pickupLocation: pickupAddress,
       contactName: formData.contactName,
       contactEmail: formData.contactEmail,
       contactPhone: formData.contactPhone,
@@ -177,12 +209,10 @@ function ReservationForm({ onSubmit }) {
         onSubmit(result);
       } else {
         const errorData = await response.json();
-        console.error('Failed to submit reservation:', errorData.message);
-        alert('Failed to submit reservation. Please try again.');
+        toast.error('Failed to submit reservation. Please try again.');
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred while submitting your reservation. Please try again.');
+      toast.error('An error occurred while submitting your reservation. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -201,7 +231,15 @@ function ReservationForm({ onSubmit }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block mb-1 font-bold text-black">Select Category</label>
-            <select name="toolType" value={formData.toolType} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required>
+            <select
+              name="toolType"
+              value={formData.toolType}
+              onChange={handleChange}
+              className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black"
+              required
+              onInvalid={(e) => e.target.setCustomValidity('Please select a category from the list')}
+              onInput={(e) => e.target.setCustomValidity('')}
+            >
               <option value="" className="text-gray-500">
                 Categories
               </option>
@@ -222,6 +260,8 @@ function ReservationForm({ onSubmit }) {
               className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black disabled:opacity-50"
               required
               disabled={!formData.toolType}
+              onInvalid={(e) => e.target.setCustomValidity('Please select a tool from the list')}
+              onInput={(e) => e.target.setCustomValidity('')}
             >
               <option value="" className="text-gray-500">
                 Tools
@@ -253,8 +293,13 @@ function ReservationForm({ onSubmit }) {
             </select>
           </div>
 
+          <div>
+            <Map className="size-fit aspect-auto" data={data_send} getAddress={getAddress} current_location={formData.pickupLocation} />
+          </div>
+
           <div className="grid md:grid-cols-1 gap-3">
-            <p className="font-bold">Reservation date</p>
+            <p className="font-bold">Reservation date </p>
+            {formError && <span className="text-red-500">{formError}</span>}
             <Datepicker
               primaryColor={'red'}
               value={{ startDate: formData.startDate, endDate: formData.endDate }}
@@ -264,6 +309,9 @@ function ReservationForm({ onSubmit }) {
               showFooter={true}
               disabledDates={disabledDates}
               className={''}
+              timezone="UTC"
+              startWeekOn="monday"
+              startFrom={new Date()}
               configs={{
                 shortcuts: {
                   today: {

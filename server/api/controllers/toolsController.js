@@ -13,7 +13,8 @@ export const procureTools = async (req, res, next) => {
             name: doc.description.nameRetail,
             price: doc.description.basePrice,
             description: doc.description.details,
-            images: doc.description.imageURIs
+            images: doc.description.imageURIs,
+            toolType: doc.toolType
           };
         })
       };
@@ -26,8 +27,9 @@ export const procureTool = async (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid) {
     return res.status(400).json({ error: 'No such tool was found' });
   }
+
   Tools.findById(id)
-    .select('_id description')
+    .select('_id description toolType') // Added toolType to selection
     .exec()
     .then((doc) => {
       console.log('From database', doc);
@@ -36,7 +38,7 @@ export const procureTool = async (req, res, next) => {
           product: doc,
           request: {
             type: 'GET',
-            description: 'Get all products',
+            description: 'Get one tool',
             url: 'http://localhost:3000/tools'
           }
         });
@@ -50,7 +52,7 @@ export const procureTool = async (req, res, next) => {
     });
 };
 export const produceTool = async (req, res, next) => {
-  const tool = new Tools(req.tools);
+  const tool = new Tools(req.body);
   tool
     .save()
     .then((result) => {
@@ -78,14 +80,14 @@ export const reformTool = async (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid) {
     return res.status(400).json({ error: 'No such tool was found' });
   }
-  const updateOps = req.body
-  Tools.findOneAndUpdate({_id: id}, updateOps, {new: true})
+  const updateOps = req.body;
+  Tools.findByIdAndUpdate({ _id: id }, updateOps, { new: true })
     .exec()
     .then((result) => {
       res.status(200).json({
         message: 'Product updated',
         request: {
-          type: 'GET',
+          type: 'PATCH',
           url: 'http://localhost:3000/tools/' + id,
           description: 'Update tool'
         }
@@ -107,7 +109,7 @@ export const eradicateTool = async (req, res, next) => {
         message: 'Product deleted',
         id,
         request: {
-          type: 'GET',
+          type: 'DELETE',
           url: 'http://localhost:3000/tools',
           body: { name: 'String', price: 'Number' }
         }
