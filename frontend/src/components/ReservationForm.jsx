@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 
 function ReservationForm({ onSubmit }) {
   const { user } = useContext(AuthContext);
+  const today = new Date();
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams] = useSearchParams();
   const [formError, setFormError] = useState('');
@@ -25,19 +26,8 @@ function ReservationForm({ onSubmit }) {
   const [fetchError, setFetchError] = useState(null);
   const [disabledDates, setDisabledDates] = useState([]);
   const today = new Date();
-
   const phoneRegex = /^\+?[1-9]\d{1,14}$/;
-
-  const validatePhone = (phoneNumber) => {
-    return phoneRegex.test(phoneNumber);
-  };
-
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
-
-
-  const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState({
     toolType: '',
     tool: '',
     toolName: '',
@@ -49,8 +39,6 @@ function ReservationForm({ onSubmit }) {
     contactEmail: user.email,
     contactPhone: user.phoneNumber
   });
-
-  const getAddress = (address) => setPickupAddress(address);
 
   useEffect(() => {
     const fetchStoresLocations = async () => {
@@ -138,6 +126,16 @@ function ReservationForm({ onSubmit }) {
       console.error('Error fetching reservations:', error);
     }
   };
+
+  const getAddress = (address) => setPickupAddress(address);
+
+  const validatePhone = (phoneNumber) => {
+    return phoneRegex.test(phoneNumber);
+  };
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
 
 
   const handleChange = (e) => {
@@ -327,7 +325,6 @@ function ReservationForm({ onSubmit }) {
           <div>
             <Map className="size-fit aspect-auto" data={data_send} getAddress={getAddress} current_location={formData.pickupLocation} />
           </div> */}
-
           <div className="grid md:grid-cols-1 gap-3">
             <p className="font-bold">Reservation date </p>
             {formError && <span className="text-red-500">{formError}</span>}
