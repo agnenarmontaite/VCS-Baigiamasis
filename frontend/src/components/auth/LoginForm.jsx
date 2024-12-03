@@ -56,7 +56,7 @@ const LoginForm = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
-        <form className="bg-white p-8 rounded-lg shadow-lg md:w-full sm:w-96" onSubmit={handleSubmit}>
+        <form className="bg-white p-8 rounded-lg shadow-lg md:w-full" onSubmit={handleSubmit}>
           <label className="block text-gray-700 mb-2">Email:</label>
           <input type="email" onChange={(e) => setEmail(e.target.value)} value={email} className="w-full px-4 py-2 border border-gray-300 rounded-lg" required/>
           {emailError && <p className="text-red-600 mt-2 ml-6">{emailError}</p>}
