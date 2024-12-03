@@ -6,8 +6,10 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import toolsRoutes from './api/routes/product.js';
 import reservationRoutes from './api/routes/reservations.js';
-import contactRoutes from './api/routes/contact.js';
+import storesRoutes from './api/routes/stores.js'
+
 import authRoutes from './api/routes/auth.js';
+import userRoutes from './api/routes/users.js';
 dotenv.config();
 
 const app = express();
@@ -30,6 +32,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use('/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 //cors config
 app.use((req, res, next) => {
@@ -44,9 +47,10 @@ app.use((req, res, next) => {
 
 //routes
 
-app.use('/tools', toolsRoutes);
-app.use('/reservations', reservationRoutes);
-app.use('/api/contact', contactRoutes);
+app.use('/tools', toolsRoutes)
+app.use('/reservations', reservationRoutes)
+app.use('/stores', storesRoutes)
+
 
 app.use((req, res, next) => {
   const error = new Error('Not found');

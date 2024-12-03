@@ -14,9 +14,7 @@ router.get('/', auth, async (req, res) => {
 
   try {
     // Suranda visas rezervacijas pagal userId
-    const reservations = await Reservation.find({ userId })
-      .select('product quantity dateRange _id') // Pasirenkame tik tam tikrus laukus
-      .exec();
+    const reservations = await Reservation.find().populate('product', 'description nameRetail').select('product quantity dateRange toolType tool pickupLocation contactName contactEmail contactPhone status _id').exec();
 
     // Grazina rezultata su rezervaciju sarasu
     res.status(200).json({
@@ -26,6 +24,13 @@ router.get('/', auth, async (req, res) => {
         product: reservation.product,
         quantity: reservation.quantity,
         dateRange: reservation.dateRange,
+        toolType: reservation.toolType,
+        tool: reservation.tool,
+        pickupLocation: reservation.pickupLocation,
+        contactName: reservation.contactName,
+        contactEmail: reservation.contactEmail,
+        contactPhone: reservation.contactPhone,
+        status: reservation.status,
         request: {
           type: 'GET',
           url: `http://localhost:3000/reservations/${reservation._id}`
@@ -123,13 +128,29 @@ router.post('/', auth, async (req, res) => {
       message: 'Reservation created successfully',
       reservation: savedReservation,
       request: {
-        type: 'GET',
+        type: 'POST',
         url: `http://localhost:3000/reservations/${savedReservation._id}`
       }
     });
   } catch (err) {
     // Grazina klaidos pranesima
     console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Traukiam rezervacijas pagal user ID
+router.get('/user/:userId', async (req, res) => {
+  try {
+    const reservations = await Reservation.find({
+      userId: req.params.userId,
+      status: { $in: ['Pending', 'Active'] } // Only get active and pending reservations
+    })
+      .populate('product', 'description.nameRetail')
+      .exec();
+
+    res.status(200).json(reservations);
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
@@ -150,7 +171,7 @@ router.get('/:reservationId', auth, async (req, res) => {
     res.status(200).json({
       reservation: reservation,
       request: {
-        type: 'GET',
+        type: 'UPDATE',
         url: 'http://localhost:3000/reservations'
       }
     });
@@ -170,13 +191,35 @@ router.delete('/:reservationId', auth, async (req, res) => {
     res.status(200).json({
       message: 'Reservation deleted',
       request: {
-        type: 'POST',
+        type: 'DELETE',
         url: 'http://localhost:3000/reservations',
         body: { productId: 'ID', quantity: 'Number' }
       }
     });
   } catch (err) {
     // Grazina klaidos pranesima
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// PUT rezervaciju tvirtinimas
+router.put('/:reservationId', async (req, res) => {
+  try {
+    const { status } = req.body;
+    const reservation = await Reservation.findById(req.params.reservationId);
+
+    if (!reservation) {
+      return res.status(404).json({ message: 'Reservation not found' });
+    }
+
+    reservation.status = status;
+    const updatedReservation = await reservation.save();
+
+    res.status(200).json({
+      message: 'Reservation status updated successfully',
+      reservation: updatedReservation
+    });
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
