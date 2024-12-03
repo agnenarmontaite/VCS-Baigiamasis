@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 
 function ReservationForm({ onSubmit }) {
   const { user } = useContext(AuthContext);
+  const today = new Date();
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams] = useSearchParams();
   const [formError, setFormError] = useState('');
@@ -22,18 +23,21 @@ function ReservationForm({ onSubmit }) {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState({});
   const [tools, setTools] = useState([]);
-  const [fetchError, setFetchError] = useState(null);
-  const today = new Date();
+  const [fetchError, setFetchError] = useState(false);
+  const [formData, setFormData] = useState({
+    toolType: '',
+    tool: '',
+    toolName: '',
+    quantity: '',
+    startDate: today,
+    endDate: today,
+    pickupLocation: pickupAddress,
+    contactName: '',
+    contactEmail: '',
+    contactPhone: ''
+  });
 
   const phoneRegex = /^\+?[1-9]\d{1,14}$/;
-
-  const validatePhone = (phoneNumber) => {
-    return phoneRegex.test(phoneNumber);
-  };
-
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
 
   const disabledDates = [
     {
@@ -45,21 +49,6 @@ function ReservationForm({ onSubmit }) {
       endDate: new Date(2024, 11, 25)
     }
   ];
-
-  const [formData, setFormData] = useState({
-    toolType: '',
-    tool: '',
-    toolName: '',
-    quantity: quantity,
-    startDate: today,
-    endDate: today,
-    pickupLocation: '',
-    contactName: user.name,
-    contactEmail: '',
-    contactPhone: ''
-  });
-
-  const getAddress = (address) => setPickupAddress(address);
 
   useEffect(() => {
     const fetchStoresLocations = async () => {
@@ -120,6 +109,15 @@ function ReservationForm({ onSubmit }) {
 
     fetchProducts();
   }, [category, toolName, quantity]);
+
+
+  const validatePhone = (phoneNumber) => {
+    return phoneRegex.test(phoneNumber);
+  };
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -294,7 +292,7 @@ function ReservationForm({ onSubmit }) {
           </div>
 
           <div>
-            <Map className="size-fit aspect-auto" data={data_send} getAddress={getAddress} current_location={formData.pickupLocation} />
+            <Map className="size-fit aspect-auto" data={data_send} setPickupAddress={setPickupAddress} current_location={formData.pickupLocation} />
           </div>
 
           <div className="grid md:grid-cols-1 gap-3">
