@@ -25,6 +25,9 @@ function Header() {
           {isLoggedIn && user?.role === 'admin' &&
             <Link to="/admin" className="py-[14px] px-[20px] text-center border border-white text-black hover:text-black hover:border hover:border-red-500 hover:rounded-[25px]">Admin</Link>
           }
+          {isLoggedIn && user?.role === 'user' && 
+            <Link to="/reservations" className="py-[14px] px-[20px] text-center border border-white text-black hover:text-black hover:border hover:border-red-500 hover:rounded-[25px]">Reservations</Link>
+          }
         </div>
         <div className="hidden lg:flex space-x-4">
           {isLoggedIn ? (

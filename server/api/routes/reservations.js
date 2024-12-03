@@ -14,7 +14,10 @@ router.get('/', auth, async (req, res) => {
 
   try {
     // Suranda visas rezervacijas pagal userId
-    const reservations = await Reservation.find().populate('product', 'description nameRetail').select('product quantity dateRange toolType tool pickupLocation contactName contactEmail contactPhone status _id').exec();
+    const reservations = await Reservation.find()
+      .populate('product', 'description nameRetail')
+      .select('product quantity dateRange _id toolType tool status pickupLocation contactName contactEmail contactPhone')
+      .exec();
 
     // Grazina rezultata su rezervaciju sarasu
     res.status(200).json({
