@@ -23,6 +23,7 @@ function ReservationForm({ onSubmit }) {
   const [categories, setCategories] = useState({});
   const [tools, setTools] = useState([]);
   const [fetchError, setFetchError] = useState(null);
+  const [disabledDates, setDisabledDates] = useState([]);
   const today = new Date();
 
   const phoneRegex = /^\+?[1-9]\d{1,14}$/;
@@ -35,16 +36,6 @@ function ReservationForm({ onSubmit }) {
     return <Navigate to="/login" />;
   }
 
-  const disabledDates = [
-    {
-      startDate: new Date(2024, 11, 1),
-      endDate: new Date(2024, 11, 10)
-    },
-    {
-      startDate: new Date(2024, 11, 20),
-      endDate: new Date(2024, 11, 25)
-    }
-  ];
 
   const [formData, setFormData] = useState({
     toolType: '',
@@ -55,8 +46,8 @@ function ReservationForm({ onSubmit }) {
     endDate: today,
     pickupLocation: '',
     contactName: user.name,
-    contactEmail: '',
-    contactPhone: ''
+    contactEmail: user.email,
+    contactPhone: user.phoneNumber
   });
 
   const getAddress = (address) => setPickupAddress(address);
@@ -120,6 +111,34 @@ function ReservationForm({ onSubmit }) {
 
     fetchProducts();
   }, [category, toolName, quantity]);
+
+  useEffect(() => {
+    if (formData.tool) {
+      fetchReservationsForTool(formData.tool);
+    } else {
+      setDisabledDates([]);
+    }
+  }, [formData.tool]);
+
+  const fetchReservationsForTool = async (toolId) => {
+    try {
+      const response = await fetch(`http://localhost:3000/reservations/product/${toolId}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        const disabledDateRanges = data.reservations.map((reservation) => ({
+          startDate: new Date(reservation.from),
+          endDate: new Date(reservation.to)
+        }));
+        setDisabledDates(disabledDateRanges);
+      } else {
+        console.error('Error fetching reservations:', data.error);
+      }
+    } catch (error) {
+      console.error('Error fetching reservations:', error);
+    }
+  };
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -281,7 +300,7 @@ function ReservationForm({ onSubmit }) {
 
           <div>
             <label className="block mb-1 font-bold text-black">Pickup Location</label>
-            <select name="pickupLocation" value={formData.pickupLocation} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required>
+            <select name="pickupLocation" value={formData.pickupLocation} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1  text-black" required>
               <option value="" className="text-gray-500">
                 Locations
               </option>
@@ -293,24 +312,36 @@ function ReservationForm({ onSubmit }) {
             </select>
           </div>
 
+          {formData.pickupLocation && (
+            <div>
+              <Map
+                className="size-fit aspect-auto"
+                data={data_send}
+                getAddress={getAddress}
+                current_location={formData.pickupLocation}
+              />
+            </div>
+          )}
+
+          {/* 
           <div>
             <Map className="size-fit aspect-auto" data={data_send} getAddress={getAddress} current_location={formData.pickupLocation} />
-          </div>
+          </div> */}
 
           <div className="grid md:grid-cols-1 gap-3">
             <p className="font-bold">Reservation date </p>
             {formError && <span className="text-red-500">{formError}</span>}
             <Datepicker
-              primaryColor={'red'}
+              primaryColor={'blue'}
               value={{ startDate: formData.startDate, endDate: formData.endDate }}
               onChange={handleDateChange}
               showShortcuts={true}
               placeholder="Select your date"
               showFooter={true}
+              containerClassName="rounded-lg border-2 border-black relative z-10"
               disabledDates={disabledDates}
-              className={''}
               timezone="UTC"
-              startWeekOn="monday"
+              startWeekOn="mon"
               startFrom={new Date()}
               configs={{
                 shortcuts: {
