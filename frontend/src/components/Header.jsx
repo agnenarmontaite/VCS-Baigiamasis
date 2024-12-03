@@ -60,8 +60,8 @@ function Header() {
       </nav>
 
       {menuOpen && (
-        <div className="flex justify-center items-center fixed inset-0 bg-black bg-opacity-50 z-[999]">
-          <div className="p-8 w-4/5 max-w-[400px] bg-white rounded-lg">
+        <div className="flex justify-center items-start fixed inset-0 bg-black bg-opacity-50 z-[999]">
+          <div className="p-8 w-4/5 max-w-[400px] bg-white rounded-lg mt-20">
             <div className="flex justify-end items-center">
               <button onClick={toggleMenu} className="text-2xl">
                 <i className="bi bi-x"></i>
@@ -69,7 +69,7 @@ function Header() {
             </div>
             <div className="flex flex-col space-y-4 text-center">
               {isLoggedIn &&
-                <p>Welcome, {user?.name}!</p>}
+                <p className='italic text-gray-500'>Welcome, {user?.name}!</p>}
               <Link to="/" onClick={toggleMenu}>Home</Link>
               <Link to="/tools" onClick={toggleMenu}>Tools</Link>
               <Link to="/about" onClick={toggleMenu}>About Us</Link>
