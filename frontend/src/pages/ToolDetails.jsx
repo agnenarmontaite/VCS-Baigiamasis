@@ -11,8 +11,20 @@ function ToolDetails() {
     fetch('http://localhost:3000/tools/' + id)
       .then((res) => res.json())
       .then((data) => {
-        setTool(data.product || {});
-        setTotalPrice(data.product.description.basePrice || '');
+        const toolData = {
+          ...data.product,
+          toolType: data.product.toolType,
+          description: {
+            ...data.product.description,
+            nameRetail: data.product.description.nameRetail,
+            basePrice: data.product.description.basePrice,
+            imageURIs: data.product.description.imageURIs,
+            details: data.product.description.details
+          }
+        };
+
+        setTool(toolData);
+        setTotalPrice(toolData.description.basePrice || '');
       })
       .catch((err) => console.error(err));
   }, [id]);
@@ -85,10 +97,7 @@ function ToolDetails() {
           <p>
             Total rent price: <span className="font-bold"> {totalPrice} € </span>
           </p>
-          <Link
-            to={`/booking/${id}?quantity=${quantity}&category=${tool.description.details['Prekės tipas']}&name=${tool.description.nameRetail}`}
-            className="bg-red-500 text-white rounded-[25px] border border-red-500 hover:border-black ml-2 px-5 py-3 font-medium"
-          >
+          <Link to={`/booking/${id}?quantity=${quantity}&category=${tool.toolType}&name=${tool.description.nameRetail}`} className="bg-red-500 text-white rounded-[25px] border border-red-500 hover:border-black ml-2 px-5 py-3 font-medium">
             Book reservation
           </Link>
         </div>
