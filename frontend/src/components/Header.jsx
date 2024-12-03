@@ -60,8 +60,8 @@ function Header() {
       </nav>
 
       {menuOpen && (
-        <div className="flex justify-center items-center fixed inset-0 bg-black bg-opacity-50 z-[999]">
-          <div className="p-8 w-4/5 max-w-[400px] bg-white rounded-lg">
+        <div className="flex justify-center items-start fixed inset-0 bg-black bg-opacity-50 z-[999]">
+          <div className="p-8 w-4/5 max-w-[400px] bg-white rounded-lg mt-20">
             <div className="flex justify-end items-center">
               <button onClick={toggleMenu} className="text-2xl">
                 <i className="bi bi-x"></i>
