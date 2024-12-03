@@ -66,7 +66,7 @@ function Header() {
             </div>
             <div className="flex flex-col space-y-4 text-center">
               {isLoggedIn &&
-                <p>Welcome, {user?.name}!</p>}
+                <p className='italic text-gray-500'>Welcome, {user?.name}!</p>}
               <Link to="/" onClick={toggleMenu}>Home</Link>
               <Link to="/tools" onClick={toggleMenu}>Tools</Link>
               <Link to="/about" onClick={toggleMenu}>About Us</Link>

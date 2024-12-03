@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import ImageGallery from "react-image-gallery";
 
 function ToolDetails() {
   const [tool, setTool] = useState({ description: { imageURIs: [], details: {}, basePrice: '' } });
@@ -43,12 +44,32 @@ function ToolDetails() {
     setTotalPrice(tool.description.basePrice * newQuantity);
   }
 
+  const galleryItems = tool.description.imageURIs.map((uri) => ({
+    original: uri,
+  }));
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h3 className="text-2xl font-bold mb-4 text-center lg:text-left">{tool.description.nameRetail}</h3>
       <div className=" mx-auto flex flex-col items-center gap-5 lg:flex-row lg:justify-between lg:mx-0 lg:gap-[30px]">
-        <div className="flex items-center w-[350px] py-4 lg:w-[600px] lg:h-[600px] bg-white">
-          <img src={tool.description.imageURIs[0]} alt="tool-image" className="lg:max-w-[600px] lg:max-h-[600px]"></img>
+        <div className="flex items-center w-[320px] h-[320px] py-4 lg:w-[600px] lg:h-[600px] bg-white">
+          <ImageGallery 
+            items={galleryItems}
+            showThumbnails={false}
+            showFullscreenButton={false}
+            showPlayButton={false}
+            additionalClass="lg:max-w-[600px] lg:max-h-[600px] w-[100%]"
+            slideDuration={0}
+            renderItem={(item) => (
+              <div className="flex justify-center" >
+              <img
+                src={item.original}
+                alt="gallery-item"
+                className="lg:max-w-[600px] lg:max-h-[600px] w-[auto]"
+              />
+              </div>
+            )}
+           />
         </div>
         <div className="lg:w-[50%] flex lg:justify-end lg:pt-5">
           <table className="lg:w-[90%]">
@@ -67,7 +88,7 @@ function ToolDetails() {
         <div className="flex flex-col gap-4 h-[82px]">
           <p className="font-bold text-red-500">Rental price: {tool.description.basePrice} € / day</p>
           <p>
-            Deposit: <span className="font-bold">{tool.description.basePrice / 5} € </span>
+            Deposit: <span className="font-bold">{tool.description.basePrice * 4 } € </span>
           </p>
         </div>
         <div className="flex flex-col text-center gap-3 h-[82px]">
