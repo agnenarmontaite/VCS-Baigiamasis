@@ -6,7 +6,7 @@ function ToolGrid({ searchCriteria = { searchText: '', category: '' }, limit = '
   const [searchResults, setSearchResults] = useState(null);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [toolsPerPage] = useState(8);
+  const [toolsPerPage] = useState(12);
 
   const indexOfLastTool = currentPage * toolsPerPage;
   const indexOfFirstTool = indexOfLastTool - toolsPerPage;
