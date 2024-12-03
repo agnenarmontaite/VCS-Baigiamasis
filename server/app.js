@@ -9,6 +9,7 @@ import reservationRoutes from './api/routes/reservations.js';
 import storesRoutes from './api/routes/stores.js'
 
 import authRoutes from './api/routes/auth.js';
+import userRoutes from './api/routes/users.js';
 dotenv.config();
 
 const app = express();
@@ -31,6 +32,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use('/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 //cors config
 app.use((req, res, next) => {

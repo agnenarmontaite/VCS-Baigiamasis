@@ -18,7 +18,7 @@ function ToolGrid({ searchCriteria = { searchText: '', category: '' }, limit = '
           }
         }).filter( Boolean )
 
-        console.log(tools)
+        // console.log(tools)
 
         if (limit) {
           setProducts(tools.slice(0, 8))
@@ -31,7 +31,7 @@ function ToolGrid({ searchCriteria = { searchText: '', category: '' }, limit = '
       });
   }, []);
 
-  console.log(products)
+  // console.log(products)
   useEffect(() => {
     handleSearch()
   }, [searchCriteria, products])
@@ -45,7 +45,7 @@ function ToolGrid({ searchCriteria = { searchText: '', category: '' }, limit = '
 
     setIsSearchActive(true)
 
-    console.log('Search Input:', searchCriteria);
+    // console.log('Search Input:', searchCriteria);
 
     const filteredProducts = products.filter((product) => {
       const matchesSearch = !searchCriteria.searchText || (product.name || '').toLowerCase().includes(searchCriteria.searchText.toLowerCase());
@@ -55,8 +55,8 @@ function ToolGrid({ searchCriteria = { searchText: '', category: '' }, limit = '
       return matchesSearch && matchesCategory;
     });
 
-    console.log('Filtered Results:', filteredProducts);
-    console.log('Number of matches:', filteredProducts.length);
+    // console.log('Filtered Results:', filteredProducts);
+    // console.log('Number of matches:', filteredProducts.length);
 
     setSearchResults(filteredProducts);
   };
