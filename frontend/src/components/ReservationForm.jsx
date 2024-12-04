@@ -111,7 +111,11 @@ function ReservationForm({ onSubmit }) {
 
   const fetchReservationsForTool = async (toolId) => {
     try {
-      const response = await fetch(`http://localhost:3000/reservations/product/${toolId}`);
+      const response = await fetch(`http://localhost:3000/reservations/product/${toolId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       const data = await response.json();
 
       if (response.ok) {

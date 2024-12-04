@@ -188,25 +188,29 @@ export const eradicateReservation = async (req, res) => {
 export const reformReservation = async (req, res) => {
   try {
     const { status } = req.body;
-    const id = req.params.reservationId;
-    const updateOps = req.body;
-    const reservation = await Reservation.findById(req.params.reservationId);
-    if (typeof updateOps === 'string') {
-      return console.log('No data apart reservation status was used');
-    } else {
-      await Reservation.findByIdAndUpdate({ _id: id }, updateOps, { new: true });
-    }
+    const reservationId = req.params.reservationId;
+    const updateData = req.body;
+
+    console.log('Updating reservation with ID:', reservationId);
+    console.log('Update data:', updateData);
+
+    const reservation = await Reservation.findById(reservationId);
     if (!reservation) {
       return res.status(404).json({ message: 'Reservation not found' });
     }
-    console.log('one', reservation);
+
+    if (typeof updateData === 'string') {
+      console.log('Only status update detected.');
+    } else {
+      await Reservation.findByIdAndUpdate(reservationId, updateData, { new: true });
+    }
+
     reservation.status = status;
     const updatedReservation = await reservation.save();
-    console.log('two', updatedReservation);
 
     res.status(200).json({
-      message: 'Reservation status updated successfully',
-      reservation: updatedReservation
+      message: 'Reservation updated successfully',
+      reservation: updatedReservation,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
