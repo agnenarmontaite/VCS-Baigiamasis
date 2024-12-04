@@ -34,7 +34,8 @@ const AdminReservations = () => {
         })
       );
 
-      setReservations(updatedReservations);
+      const sortedReservations = updatedReservations.sort((a, b) => b._id.localeCompare(a._id));
+      setReservations(sortedReservations);
       setLoading(false);
     } catch (error) {
       toast.error('Failed to fetch reservations');
@@ -65,6 +66,27 @@ const AdminReservations = () => {
       }
     } catch (error) {
       toast.error(error.message);
+    }
+  };
+
+  // Trinti rezervacija per pagrindini admin puslapi
+  const handleDelete = async (reservationId) => {
+    if (window.confirm('Are you sure you want to delete this reservation?')) {
+      try {
+        const response = await fetch(`http://localhost:3000/reservations/${reservationId}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (response.ok) {
+          setReservations(reservations.filter((res) => res._id !== reservationId));
+          toast.success('Reservation deleted successfully');
+        }
+      } catch (error) {
+        toast.error('Failed to delete reservation');
+      }
     }
   };
 
@@ -107,8 +129,10 @@ const AdminReservations = () => {
                   <thead>
                     <tr className="bg-gray-50 border-b border-gray-200">
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Tool</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Contact Name</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Start Date</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">End Date</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Quantity</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Status</th>
                     </tr>
                   </thead>
@@ -116,15 +140,36 @@ const AdminReservations = () => {
                     {currentReservations.map((reservation) => (
                       <tr key={reservation._id} className="hover:bg-gray-50 transition-colors duration-200" onClick={() => handleRowClick(reservation)}>
                         <td className="px-6 py-4 text-sm text-gray-900">{reservation.tool}</td>
+                        <td className="px-6 py-4 text-sm text-gray-900">{reservation.contactName}</td>
                         <td className="px-6 py-4 text-sm text-gray-900">{new Date(reservation.dateRange.from).toLocaleDateString()}</td>
                         <td className="px-6 py-4 text-sm text-gray-900">{new Date(reservation.dateRange.to).toLocaleDateString()}</td>
+                        <td className="px-6 py-4 text-sm text-gray-900">{reservation.quantity}</td>
                         <td className="px-6 py-4">
                           <span
                             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                            ${reservation.status === 'Approved' ? 'bg-green-100 text-green-800' : reservation.status === 'Declined' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}
+                           ${
+                             reservation.status === 'Approved'
+                               ? 'bg-green-100 text-green-800'
+                               : reservation.status === 'Declined'
+                               ? 'bg-red-100 text-red-800'
+                               : reservation.status === 'Completed'
+                               ? 'bg-blue-100 text-blue-800'
+                               : 'bg-yellow-100 text-yellow-800'
+                           }`}
                           >
                             {reservation.status || 'Pending'}
                           </span>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(reservation._id);
+                            }}
+                            className="inline-flex items-center gap-2 bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transform transition-all duration-200"
+                          >
+                            Delete
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -173,6 +218,7 @@ const AdminReservations = () => {
                 <div>
                   <p className="font-semibold">Tool</p>
                   <p>{selectedReservation.tool}</p>
+                  <p>Quantity: {selectedReservation.quantity}</p>
                 </div>
                 <div>
                   <p className="font-semibold">Contact Information</p>
@@ -217,7 +263,7 @@ const AdminReservations = () => {
         {/* Sukurti nauja rezervacija modalas */}
         {showNewReservationModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full m-4 p-6">
+            <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full m-4 p-6">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-2xl font-bold text-gray-900">Create New Reservation</h3>
                 <button onClick={() => setShowNewReservationModal(false)} className="text-gray-500 hover:text-gray-700 transition-colors duration-200">

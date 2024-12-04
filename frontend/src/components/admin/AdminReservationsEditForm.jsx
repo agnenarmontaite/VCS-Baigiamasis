@@ -33,7 +33,6 @@ const AdminReservationEditForm = () => {
         }
       });
       const data = await response.json();
-
       setFormData({
         contactName: data.reservation.contactName,
         contactEmail: data.reservation.contactEmail,
@@ -71,7 +70,7 @@ const AdminReservationEditForm = () => {
       }));
     }
   };
-console.log(formData)
+  console.log(formData);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -82,8 +81,8 @@ console.log(formData)
           Authorization: `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify(formData)
-      })
-      console.log(formData)
+      });
+
       if (response.ok) {
         refreshReservations();
         toast.success('Reservation updated successfully');
