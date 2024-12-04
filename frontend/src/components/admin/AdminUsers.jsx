@@ -83,6 +83,7 @@ const AdminUsers = () => {
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Email</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Phone</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Role</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Reservations</th>
                       <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900">Actions</th>
                     </tr>
                   </thead>
@@ -103,6 +104,7 @@ const AdminUsers = () => {
                             {user.role}
                           </span>
                         </td>
+                        <td className="px-6 py-4 text-sm text-gray-900">{user.reservations ? user.reservations.length : 0}</td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex justify-end gap-2">
                             <Link to={`edit/${user._id}`} className="inline-flex items-center px-3 py-1 border bg-blue-500 text-white rounded-lg hover:bg-blue-400 transition-all duration-200">
