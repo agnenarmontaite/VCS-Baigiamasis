@@ -48,12 +48,19 @@ function ToolDetails() {
     original: uri,
   }));
 
+  const formatText = (input) => {
+    return input
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ')
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h3 className="text-2xl font-bold mb-4 text-center lg:text-left">{tool.description.nameRetail}</h3>
       <div className=" mx-auto flex flex-col items-center gap-5 lg:flex-row lg:justify-between lg:mx-0 lg:gap-[30px]">
         <div className="flex items-center w-[320px] h-[320px] py-4 lg:w-[600px] lg:h-[600px] bg-white">
-          <ImageGallery 
+          <ImageGallery
             items={galleryItems}
             showThumbnails={false}
             showFullscreenButton={false}
@@ -62,23 +69,24 @@ function ToolDetails() {
             slideDuration={0}
             renderItem={(item) => (
               <div className="flex justify-center" >
-              <img
-                src={item.original}
-                alt="gallery-item"
-                className="lg:max-w-[600px] lg:max-h-[600px] w-[auto]"
-              />
+                <img
+                  src={item.original}
+                  alt="gallery-item"
+                  className="lg:max-w-[600px] lg:max-h-[600px] w-[auto]"
+                />
               </div>
             )}
-           />
+          />
         </div>
         <div className="lg:w-[50%] flex lg:justify-end lg:pt-5">
           <table className="lg:w-[90%]">
             <tbody>
               {Object.entries(tool.description.details).map(([key, value]) => (
-                <tr key={key}>
-                  <td className="font-bold pr-5">{key}</td>
-                  <td>{value}</td>
-                </tr>
+                (key !== 'productType' &&
+                  <tr key={key}>
+                    <td className="font-bold pr-5">{formatText(key)}</td>
+                    <td>{value === true ? 'Yes' : (value === false ? 'No' : value)}</td>
+                  </tr>)
               ))}
             </tbody>
           </table>
@@ -88,7 +96,7 @@ function ToolDetails() {
         <div className="flex flex-col gap-4 h-[82px]">
           <p className="font-bold text-red-500">Rental price: {tool.description.basePrice} € / day</p>
           <p>
-            Deposit: <span className="font-bold">{tool.description.basePrice * 4 } € </span>
+            Deposit: <span className="font-bold">{tool.description.basePrice * 4} € </span>
           </p>
         </div>
         <div className="flex flex-col text-center gap-3 h-[82px]">

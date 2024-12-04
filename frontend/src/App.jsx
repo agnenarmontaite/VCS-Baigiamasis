@@ -26,6 +26,7 @@ import ProfilePanel from './pages/ProfilePanel';
 import ProfileDetails from './components/ProfileDetails';
 import UserReservationList from './components/UserReservationList';
 import { useAuth } from './hooks/useAuth';
+import NotFound from './pages/NotFound';
 
 function App() {
   const { user } = useAuth();
@@ -33,15 +34,16 @@ function App() {
   return (
     <>
       <Header />
-      <div className="min-h-[80vh] bg-gray-50">
+      <div className="min-h-[67vh] bg-gray-50">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/tools" element={<Tools />} />
           <Route path="/tools/:id" element={<ToolDetails />} />
-          <Route path="/booking/:id" element={<Booking />} />
+          <Route path="/booking/:id" element={user ? <Booking /> : <Navigate to="/login" replace />} />
           <Route path="/confirmation" element={<Confirmation />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<AboutUs />} />
+          <Route path='*' element={<NotFound/>} />
 
           {/* Protected Admin Routes */}
           <Route path="/admin" element={user?.role === 'admin' ? <AdminPanel /> : <Navigate to="/" replace />}>
