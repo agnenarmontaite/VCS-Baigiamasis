@@ -53,37 +53,37 @@ const AdminUsersNewForm = ({ onClose, refreshUsers }) => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block mb-1">Name</label>
-          <input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full p-2 border rounded" required />
+          <input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full py-2 border rounded " required />
         </div>
 
         <div>
           <label className="block mb-1">Email</label>
-          <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full p-2 border rounded" required />
+          <input type="email" name="email" value={formData.email} onChange={handleChange} className="w-full py-2 border rounded" required />
         </div>
 
         <div>
           <label className="block mb-1">Password</label>
-          <input type="password" name="password" value={formData.password} onChange={handleChange} className="w-full p-2 border rounded" required />
+          <input type="password" name="password" value={formData.password} onChange={handleChange} className="w-full py-2 border rounded" required />
         </div>
 
         <div>
           <label className="block mb-1">Phone Number</label>
-          <input type="tel" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} className="w-full p-2 border rounded" required />
+          <input type="tel" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} className="w-full py-2 border rounded" required />
         </div>
 
         <div>
           <label className="block mb-1">Date of Birth</label>
-          <input type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} className="w-full p-2 border rounded" required />
+          <input type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} className="w-full py-2 border rounded" required />
         </div>
 
         <div>
           <label className="block mb-1">Address</label>
-          <input type="text" name="address" value={formData.address} onChange={handleChange} className="w-full p-2 border rounded" required />
+          <input type="text" name="address" value={formData.address} onChange={handleChange} className="w-full py-2 border rounded" required />
         </div>
 
         <div>
           <label className="block mb-1">Role</label>
-          <select name="role" value={formData.role} onChange={handleChange} className="w-full p-2 border rounded">
+          <select name="role" value={formData.role} onChange={handleChange} className="w-full py-2 border rounded">
             <option value="user">User</option>
             <option value="admin">Admin</option>
           </select>
