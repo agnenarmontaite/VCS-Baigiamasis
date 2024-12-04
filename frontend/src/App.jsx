@@ -26,6 +26,7 @@ import ProfilePanel from './pages/ProfilePanel';
 import ProfileDetails from './components/ProfileDetails';
 import UserReservationList from './components/UserReservationList';
 import { useAuth } from './hooks/useAuth';
+import NotFound from './pages/NotFound';
 
 function App() {
   const { user } = useAuth();
@@ -42,6 +43,7 @@ function App() {
           <Route path="/confirmation" element={<Confirmation />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<AboutUs />} />
+          <Route path='*' element={<NotFound/>} />
 
           {/* Protected Admin Routes */}
           <Route path="/admin" element={user?.role === 'admin' ? <AdminPanel /> : <Navigate to="/" replace />}>
