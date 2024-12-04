@@ -177,6 +177,7 @@ const AdminReservations = () => {
                 <div>
                   <p className="font-semibold">Tool</p>
                   <p>{selectedReservation.tool}</p>
+                  <p>Quantity: {selectedReservation.quantity}</p>
                 </div>
                 <div>
                   <p className="font-semibold">Contact Information</p>
