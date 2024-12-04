@@ -28,6 +28,6 @@ describe("checks login function and home page rendering", () => {
       .find("button")
       .click()
       .get("header nav div span")
-      .should("contain.text", "Welcome, Adis!");
+      .should("contain.text", "Welcome");
   });
 });

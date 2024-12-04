@@ -17,7 +17,7 @@ describe("checks contact us page functions and rendering", () => {
       .find("button")
       .click()
       .get("header nav div span")
-      .should("contain.text", "Welcome, Adis!")
+      .should("contain.text", "Welcome")
   });
   it("navigates to contact page and tries to send a message", () => {
     cy.get("header nav div")

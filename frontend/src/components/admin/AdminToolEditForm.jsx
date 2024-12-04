@@ -6,7 +6,6 @@ function AdminToolEditForm() {
   const [product] = useOutletContext();
   const [itemEdit, setItemEdit] = useState({ product });
   const token = localStorage.token;
-console.log(product)
   const handleItemPatch = async (e) => {
     e.preventDefault();
     try {
