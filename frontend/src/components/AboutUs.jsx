@@ -1,6 +1,6 @@
 const AboutUs = () => {
   return (
-    <div className="flex flex-col lg:flex-row gap-8">
+    <div className="flex flex-col lg:flex-row lg:gap-8">
       <div className="lg:w-1/4">
       <div className="bg-[url('../src/assets/equipment-photo.jpg')] bg-cover bg-left min-h-[100%] m-0 p-0"></div>
       </div>
