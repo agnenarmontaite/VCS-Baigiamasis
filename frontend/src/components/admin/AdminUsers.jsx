@@ -99,8 +99,8 @@ const AdminUsers = () => {
                         <td className="px-6 py-4 text-sm text-gray-900">{user.phoneNumber}</td>
                         <td className="px-6 py-4">
                           <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                            ${user.role === 'admin' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}
+                            className={`inline-flex items-center px-4 py-1 rounded-full text-xs font-medium
+                            ${user.role === 'admin' ? 'bg-green-200 text-black-800 capitalize' : 'bg-yellow-100 text-black-800 capitalize'}`}
                           >
                             {user.role}
                           </span>
