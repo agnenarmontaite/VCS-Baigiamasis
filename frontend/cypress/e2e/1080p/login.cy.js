@@ -12,7 +12,7 @@ describe("checks login function and home page rendering", () => {
       .should("contain.text", "Email")
       .should("contain.text", "Password");
   });
-  it("tries to log in, checks home page for relevan navbar changes", () => {
+  it("tries to log in, checks home page for relevant navbar changes", () => {
     cy.get("header nav div")
     .find("a[href='/login']")
       .click()
