@@ -1,6 +1,7 @@
 import User from '../models/User.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
-// Get all users
 const getUsers = async (req, res) => {
   console.log('Fetching users...');
   try {
@@ -13,7 +14,6 @@ const getUsers = async (req, res) => {
   }
 };
 
-// Get single user
 const getUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -37,7 +37,6 @@ const getUser = async (req, res) => {
   }
 };
 
-// Create user
 const createUser = async (req, res) => {
   try {
     const { name, email, password, phoneNumber, dateOfBirth, address, role } = req.body;
@@ -71,15 +70,16 @@ const createUser = async (req, res) => {
   }
 };
 
-// Update user
 const updateUser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id).select('+password');
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const { name, email, phoneNumber, dateOfBirth, address, role } = req.body;
+    const { name, email, phoneNumber, dateOfBirth, address, role, password } = req.body;
+
+    // Update non-password fields
     user.name = name || user.name;
     user.email = email || user.email;
     user.phoneNumber = phoneNumber || user.phoneNumber;
@@ -87,22 +87,34 @@ const updateUser = async (req, res) => {
     user.address = address || user.address;
     user.role = role || user.role;
 
+    // Handle password update with hashing
+    if (password) {
+      user.password = await bcrypt.hash(password, 10);
+    }
+
     const updatedUser = await user.save();
+
+    // Generate new token
+    const token = jwt.sign({ email: updatedUser.email, userId: updatedUser._id, role: updatedUser.role }, process.env.JWT_SECRET, { expiresIn: '2h' });
+
     res.json({
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-      phoneNumber: updatedUser.phoneNumber,
-      dateOfBirth: updatedUser.dateOfBirth,
-      address: updatedUser.address,
-      role: updatedUser.role
+      message: 'User updated successfully',
+      token,
+      user: {
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        phoneNumber: updatedUser.phoneNumber,
+        dateOfBirth: updatedUser.dateOfBirth,
+        address: updatedUser.address,
+        role: updatedUser.role
+      }
     });
   } catch (error) {
     res.status(500).json({ message: 'Server Error' });
   }
 };
 
-// Delete user
 const deleteUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);

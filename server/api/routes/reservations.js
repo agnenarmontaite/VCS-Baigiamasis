@@ -14,10 +14,7 @@ router.get('/', auth, async (req, res) => {
 
   try {
     // Suranda visas rezervacijas pagal userId
-    const reservations = await Reservation.find()
-      .populate('product', 'description nameRetail')
-      .select('product quantity dateRange _id toolType tool status pickupLocation contactName contactEmail contactPhone')
-      .exec();
+    const reservations = await Reservation.find().populate('product', 'description nameRetail').select('product quantity dateRange _id toolType tool status pickupLocation contactName contactEmail contactPhone').exec();
 
     // Grazina rezultata su rezervaciju sarasu
     res.status(200).json({
@@ -146,8 +143,8 @@ router.post('/', auth, async (req, res) => {
 router.get('/user/:userId', async (req, res) => {
   try {
     const reservations = await Reservation.find({
-      userId: req.params.userId,
-      status: { $in: ['Pending', 'Active'] } // Only get active and pending reservations
+      userId: req.params.userId
+      // Removed the status filter to get all reservations
     })
       .populate('product', 'description.nameRetail')
       .exec();
