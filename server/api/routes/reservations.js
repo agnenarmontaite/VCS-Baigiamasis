@@ -2,10 +2,12 @@ import express from 'express';
 import auth from '../middleware/auth.js';
 import * as controller from "../controllers/reservationsController.js"
 import adminAuth from '../middleware/admin.js';
+import Reservation from '../models/reservations.js';
 
 const router = express.Router();
 
 // GET visi userio rezervacijos (naudojant auth middleware)
+/*
 router.get('/', auth, async (req, res) => {
   // Is userData paimamas userId (id is JWT tokeno)
   const { userId } = req.userData;
@@ -43,8 +45,9 @@ router.get('/', auth, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+*/
 
-//router.get('/', auth, adminAuth, controller.procureReservations);
+router.get('/', auth, adminAuth, controller.procureReservations);
 
 // POST sukuria nauja rezervacija (naudojant auth middleware)
 router.post('/', auth, controller.produceReservation);
@@ -78,5 +81,7 @@ router.delete('/:reservationId', auth, controller.eradicateReservation);
 
 // PUT rezervaciju tvirtinimas
 router.put('/:reservationId', auth, adminAuth, controller.reformReservation);
+
+router.patch('/:reservationId')
 
 export default router;

@@ -8,7 +8,10 @@ export const procureReservations = async (req, res) => {
     const { userId } = req.userData;
     try {
       // Suranda visas rezervacijas pagal userId
-      const reservations = await Reservation.find().populate('product', 'description nameRetail').select('product quantity dateRange toolType tool pickupLocation contactName contactEmail contactPhone status _id').exec();
+      const reservations = await Reservation.find()
+      .populate('product', 'description nameRetail')
+      .select('product quantity dateRange _id toolType tool status pickupLocation contactName contactEmail contactPhone')
+      .exec();
   
       // Grazina rezultata su rezervaciju sarasu
       res.status(200).json({
@@ -191,14 +194,21 @@ export const eradicateReservation = async (req, res) => {
 export const reformReservation = async (req, res) => {
     try {
       const { status } = req.body;
+      const id = req.params.reservationId
+      const updateOps = req.body
       const reservation = await Reservation.findById(req.params.reservationId);
-  
+      if(typeof updateOps === 'string') {
+        return console.log("No data apart reservation status was used")
+      } else {
+        await Reservation.findByIdAndUpdate({_id: id}, updateOps, {new:true})
+      }
       if (!reservation) {
         return res.status(404).json({ message: 'Reservation not found' });
       }
-  
+      console.log("one", reservation)
       reservation.status = status;
       const updatedReservation = await reservation.save();
+      console.log("two", updatedReservation)
   
       res.status(200).json({
         message: 'Reservation status updated successfully',

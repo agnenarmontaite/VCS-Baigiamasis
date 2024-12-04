@@ -2,21 +2,19 @@ import { useState, useEffect } from 'react';
 import { PulseLoader } from 'react-spinners';
 import Datepicker from 'react-tailwindcss-datepicker';
 import { useContext } from 'react';
-import { Navigate, useParams, useSearchParams } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import Map from './Map';
 import { toast } from 'react-toastify';
 
 function ReservationForm({ onSubmit }) {
   const { user } = useContext(AuthContext);
-  const today = new Date();
   const [isLoading, setIsLoading] = useState(true);
   const [searchParams] = useSearchParams();
   const [formError, setFormError] = useState('');
   const quantity = parseInt(searchParams.get('quantity')) || 1;
   const category = searchParams.get('category');
   const toolName = searchParams.get('name');
-  const { id } = useParams();
   const [pickupLocations, setPickupLocations] = useState([]);
   const [data_send, setData_send] = useState([]);
   const [pickupAddress, setPickupAddress] = useState('');
@@ -31,7 +29,7 @@ function ReservationForm({ onSubmit }) {
     toolType: '',
     tool: '',
     toolName: '',
-    quantity: quantity,
+    quantity: '',
     startDate: today,
     endDate: today,
     pickupLocation: '',
@@ -126,8 +124,6 @@ function ReservationForm({ onSubmit }) {
       console.error('Error fetching reservations:', error);
     }
   };
-
-  const getAddress = (address) => setPickupAddress(address);
 
   const validatePhone = (phoneNumber) => {
     return phoneRegex.test(phoneNumber);
@@ -309,18 +305,16 @@ function ReservationForm({ onSubmit }) {
               ))}
             </select>
           </div>
-
-          {formData.pickupLocation && (
+              {formData.pickupLocation && (
             <div>
               <Map
                 className="size-fit aspect-auto"
                 data={data_send}
-                getAddress={getAddress}
+                pickupAddress={setPickupAddress}
                 current_location={formData.pickupLocation}
               />
             </div>
-          )}
-
+              )}
           {/* 
           <div>
             <Map className="size-fit aspect-auto" data={data_send} getAddress={getAddress} current_location={formData.pickupLocation} />
