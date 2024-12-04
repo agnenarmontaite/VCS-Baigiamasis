@@ -77,6 +77,6 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 // 404
 app.use((req, res) => {
   res.status(404).json({
-      error: '404 - Page not found'
-  })
-})
+    error: '404 - Page not found'
+  });
+});
