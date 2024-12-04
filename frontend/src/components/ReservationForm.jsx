@@ -167,7 +167,7 @@ function ReservationForm({ onSubmit }) {
         toolType: selectedTool ? selectedTool.toolType : prev.toolType
       }));
 
-      // Calculate price when tool is selected
+      // Kai pasirenkam tool apskaiciuojam
       if (selectedTool && selectedTool.description?.basePrice) {
         setBasePrice(selectedTool.description.basePrice);
         calculateTotalPrice(selectedTool.description.basePrice, formData.quantity);
@@ -183,7 +183,7 @@ function ReservationForm({ onSubmit }) {
         setTools(categories[value] || []);
       }
 
-      // Calculate price when quantity changes
+      // Jeigu pasikeicia kiekis
       if (name === 'quantity' && basePrice) {
         calculateTotalPrice(basePrice, value);
       }
