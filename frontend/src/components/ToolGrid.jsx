@@ -13,7 +13,7 @@ function ToolGrid({ searchCriteria = { searchText: '', category: '' }, limit = '
   const currentTools = (searchResults && isSearchActive ? searchResults : products).slice(indexOfFirstTool, indexOfLastTool);
   const totalPages = Math.ceil((searchResults && isSearchActive ? searchResults : products).length / toolsPerPage);
   console.log(indexOfLastTool)
-
+  console.log(products)
   useEffect(() => {
     fetch('http://localhost:3000/tools')
       .then((res) => {
@@ -52,8 +52,8 @@ function ToolGrid({ searchCriteria = { searchText: '', category: '' }, limit = '
 
     const filteredProducts = products.filter((product) => {
       const matchesSearch = !searchCriteria.searchText || (product.name || '').toLowerCase().includes(searchCriteria.searchText.toLowerCase());
-
-      const matchesCategory = !searchCriteria.category || (product.description['productType'] || '') === searchCriteria.category;
+      console.log(product.toolType)
+      const matchesCategory = !searchCriteria.category || (product.description.details['productType'] || '') === searchCriteria.category;
 
       return matchesSearch && matchesCategory;
     });
