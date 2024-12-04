@@ -155,6 +155,24 @@ router.get('/user/:userId', async (req, res) => {
   }
 });
 
+// Gaunam rezervacijas pagal specifini productId
+router.get('/product/:productId', async (req, res) => {
+  try {
+    const reservations = await Reservation.find({ product: req.params.productId })
+      .select('dateRange')
+      .exec();
+
+    res.status(200).json({
+      reservations: reservations.map((reservation) => ({
+        from: reservation.dateRange.from,
+        to: reservation.dateRange.to
+      }))
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET vienos rezervacijos informacija pagal id
 router.get('/:reservationId', auth, async (req, res) => {
   try {
