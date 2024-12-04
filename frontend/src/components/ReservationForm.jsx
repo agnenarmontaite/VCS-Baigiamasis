@@ -347,6 +347,7 @@ function ReservationForm({ onSubmit }) {
                   timezone="UTC"
                   startWeekOn="mon"
                   startFrom={new Date()}
+                  minDate={new Date()}
                   configs={{
                     shortcuts: {
                       today: {
