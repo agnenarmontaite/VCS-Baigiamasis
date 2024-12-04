@@ -22,7 +22,8 @@ function ReservationList() {
         }
       });
       const data = await response.json();
-      setReservations(Array.isArray(data) ? data : []);
+      const sortedReservations = Array.isArray(data) ? data.sort((a, b) => b._id.localeCompare(a._id)) : [];
+      setReservations(sortedReservations);
     } catch (error) {
       toast.error('Failed to fetch reservations');
       setReservations([]);
@@ -68,7 +69,15 @@ function ReservationList() {
                     <td className="px-6 py-4">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-  ${reservation.status === 'Completed' ? 'bg-blue-100 text-blue-800' : reservation.status === 'Approved' ? 'bg-green-100 text-green-800' : reservation.status === 'Declined' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}
+                          ${
+                            reservation.status === 'Completed'
+                              ? 'bg-blue-100 text-blue-800'
+                              : reservation.status === 'Approved'
+                              ? 'bg-green-100 text-green-800'
+                              : reservation.status === 'Declined'
+                              ? 'bg-red-100 text-red-800'
+                              : 'bg-yellow-100 text-yellow-800'
+                          }`}
                       >
                         {reservation.status}
                       </span>

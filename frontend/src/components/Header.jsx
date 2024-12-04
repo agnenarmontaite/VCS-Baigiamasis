@@ -87,10 +87,14 @@ function Header() {
               <Link to="/about" onClick={toggleMenu}>About Us</Link>
               <Link to="/contact" onClick={toggleMenu}>Contact</Link>
               {user ? (
-            <Link to="/profile" className="py-[14px] px-[20px] text-center border border-white text-black hover:text-black hover:border hover:border-red-500 hover:rounded-[25px]">
-              Profile
-            </Link>
-          ) : null}
+  <Link 
+    to="/profile" 
+    onClick={toggleMenu}
+    className="text-black"
+  >
+    Profile
+  </Link>
+) : null}
               {isLoggedIn && user?.role === 'admin' && (
                 <Link to="/admin" onClick={toggleMenu}>
                   Admin
