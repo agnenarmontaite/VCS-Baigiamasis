@@ -21,21 +21,18 @@ const Tools = () => {
     });
 
     const categories = [
-        { key: "Generatoriai", title: "Generators", icon: <GeneratorLogo className="w-[100%] h-[100%]" /> },
-        { key: "Perforatoriai", title: "Rotary Hammers", icon: <RotaryHammerLogo className="w-[100%] h-[100%]" /> },
-        { key: "Elektrinė freza", title: "Electric Routers", icon: <ElectricRouterLogo className="w-[100%] h-[100%]" /> },
-        { key: "Freza", title: "Routers", icon: <RouterLogo className="w-[100%] h-[100%]" /> },
-        { key: "Plytelių pjovimo staklės", title: "Tile Cutting Machines", icon: <TileCuttingMachineLogo className="w-[100%] h-[100%]" /> },
-        { key: "Diskinis pjūklas", title: "Circular Saws", icon: <CircularSawLogo className="w-[100%] h-[100%]" /> },
-        { key: "Pjovimo staklės", title: "Cutting Machines", icon: <CuttingMachineLogo className="w-[100%] h-[100%]" /> },
-        { key: "Atskėlimo plaktukai", title: "Demolition Hammers", icon: <DemolitionHammersLogo className="w-[100%] h-[100%]" /> },
-        { key: "Grandininiai pjūklai", title: "Chain Saws", icon: <ChainSawsLogo className="w-[100%] h-[100%]" /> },
-        { key: "Statybinis dulkių siurblys", title: "Construction Vacuums", icon: <ConstructionVacuumLogo className="w-[100%] h-[100%]" /> },
+        { key: "Generators", title: "Generators", icon: <GeneratorLogo className="w-[100%] h-[100%]" /> },
+        { key: "Rotary Hammers", title: "Rotary Hammers", icon: <RotaryHammerLogo className="w-[100%] h-[100%]" /> },
+        { key: "Electric Routers", title: "Electric Routers", icon: <ElectricRouterLogo className="w-[100%] h-[100%]" /> },
+        { key: "Routers", title: "Routers", icon: <RouterLogo className="w-[100%] h-[100%]" /> },
+        { key: "Tile Cutting Machines", title: "Tile Cutting Machines", icon: <TileCuttingMachineLogo className="w-[100%] h-[100%]" /> },
+        { key: "Circular Saws", title: "Circular Saws", icon: <CircularSawLogo className="w-[100%] h-[100%]" /> },
+        { key: "Cutting Machines", title: "Cutting Machines", icon: <CuttingMachineLogo className="w-[100%] h-[100%]" /> },
+        { key: "Demolition Hammers", title: "Demolition Hammers", icon: <DemolitionHammersLogo className="w-[100%] h-[100%]" /> },
+        { key: "Chain Saws", title: "Chain Saws", icon: <ChainSawsLogo className="w-[100%] h-[100%]" /> },
+        { key: "Vacuums", title: "Construction Vacuums", icon: <ConstructionVacuumLogo className="w-[100%] h-[100%]" /> },
     ]
 
-    const handleSearch = (category) => {
-        setSearchCriteria({ ...searchCriteria, category })
-    }
 
     return (
         <div>
@@ -45,7 +42,9 @@ const Tools = () => {
                     className="flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4 lg:gap-5 w-[75%] xs:w-[60%] sm:w-[70%] max-w-[900px] mt-3 mb-6 md:mt-7"
                 >
                     {categories.map((item) => (
-                        <div key={item.key} onClick={() => handleSearch(item.key)} className={'text-center border flex flex-col items-center w-[120px] lg:w-[155px] mt-1 border-gray-200 bg-white ' + (searchCriteria.category === item.key ? 'shadow-[0_0_8px_2px_rgba(239,68,68,0.5)]' : 'shadow-md')}>
+                        <div key={item.key} 
+                        onClick={() => setSearchCriteria({ ...searchCriteria, category: item.key })} 
+                        className={'text-center border flex flex-col items-center w-[120px] lg:w-[155px] mt-1 border-gray-200 bg-white ' + (searchCriteria.category === item.key ? 'shadow-[0_0_8px_2px_rgba(239,68,68,0.5)]' : 'shadow-md')}>
                             <span className="text-gray-500 w-[40px] sm:w-[60px] md:w-[70px] lg:w-[90px] p-1 lg:p-2">{item.icon}</span>
                             <h3 className="text-[12px] lg:text-[20px]">{item.title}</h3>
                         </div>
