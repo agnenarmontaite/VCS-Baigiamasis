@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: '',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -12,6 +13,7 @@ export default {
       },
       fontFamily: {
         'plus-jakarta': ['"Plus Jakarta Sans"', 'sans-serif'],
+        'lexend': ["'Lexend'", "sans-serif"],
       },
       screens: {
         'xs': {'min': '520px', 'max': '639px' },

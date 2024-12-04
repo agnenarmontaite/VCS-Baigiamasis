@@ -6,7 +6,7 @@ const Search = ({ searchCriteria, onSearch }) => {
 
 
                 <div className="flex flex-col md:flex-row justify-center items-center lg:w-[894px] ">
-                    <div className={"w-[100%] md:w-[60%] relative mb-2 md:mb-0 "}>
+                    <div className={"w-[100%] md:w-[70%] relative mb-2 md:mb-0 "}>
                         <input
                             type="text"
                             value={searchCriteria.searchText}
@@ -20,10 +20,10 @@ const Search = ({ searchCriteria, onSearch }) => {
                             onClick={() => {
                                 onSearch({ searchText: '', category: '' });
                             }}
-                            className={`border-0 rounded-full text-white bg-gray-500 absolute w-[25px] h-[25px] md:w-[45px] md:h-[45px] text-[15px] md:text-[20px] right-3 top-[25%] md:top-[20%] flex items-center justify-center md:inline-block transition-all duration-300 transform ${searchCriteria.searchText || searchCriteria.category ? 'translate-x-0 opacity-100 visible' : 'translate-x-full opacity-0 invisible'
+                            className={`border-0 rounded-full text-white bg-gray-500 absolute w-[25px] h-[25px] md:w-[130px] md:h-[45px] text-[15px] md:text-[20px] right-3 top-[25%] md:top-[20%] flex items-center justify-center transition-all duration-300 transform ${searchCriteria.searchText || searchCriteria.category ? 'translate-x-0 opacity-100 visible' : 'translate-x-full opacity-0 invisible'
                                 }`}
                         >
-                            <i className="bi bi-x-lg"></i>
+                         <i className="bi bi-x-lg"></i><span className="hidden md:inline-block ml-1 text-[14px] tracking-wide">Clear filters</span>
                         </button>
                     </div>
                 </div>
