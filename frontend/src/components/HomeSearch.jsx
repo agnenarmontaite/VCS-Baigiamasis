@@ -27,16 +27,16 @@ const HomeSearch = () => {
           <div className="w-[80%] sm:w-[60%] md:w-[45%] relative mb-2 md:mb-0">
             <select value={selectedCategory} onChange={(e) => {setSelectedCategory(e.target.value)}} className="border-none rounded-full md:rounded-none md:h-[96px] text-[20px] leading-[30px] w-full py-2.5 px-[40px] pl-[50px] text-gray-400">
               <option value="">Select Category</option>
-              <option value="Generatoriai">Generators</option>
-              <option value="Perforatoriai">Rotary Hammers</option>
-              <option value="Elektrinė freza">Electric Routers</option>
-              <option value="Freza">Routers</option>
-              <option value="Plytelių pjovimo staklės">Tile Cutting Machines</option>
-              <option value="Diskinis pjūklas">Circular Saws</option>
-              <option value="Pjovimo staklės">Cutting Machines</option>
-              <option value="Atskėlimo plaktukai">Demolition Hammers</option>
-              <option value="Grandininiai pjūklai">Chain Saws</option>
-              <option value="Statybinis dulkių siurblys">Construction Vacuums</option>
+              <option value="Generators">Generators</option>
+              <option value="Rotary Hammers">Rotary Hammers</option>
+              <option value="Electric Routers">Electric Routers</option>
+              <option value="Routers">Routers</option>
+              <option value="Tile Cutting Machines">Tile Cutting Machines</option>
+              <option value="Circular Saws">Circular Saws</option>
+              <option value="Cutting Machines">Cutting Machines</option>
+              <option value="Demolition Hammers">Demolition Hammers</option>
+              <option value="Chain Saws">Chain Saws</option>
+              <option value="Vacuums">Construction Vacuums</option>
             </select>
             <i className="bi bi-tools absolute left-4 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
           </div>

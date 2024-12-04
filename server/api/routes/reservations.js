@@ -93,6 +93,4 @@ router.delete('/:reservationId', auth, controller.eradicateReservation);
 // PUT rezervaciju tvirtinimas
 router.put('/:reservationId', auth, adminAuth, controller.reformReservation);
 
-router.patch('/:reservationId')
-
 export default router;
