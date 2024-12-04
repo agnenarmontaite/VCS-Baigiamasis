@@ -69,6 +69,27 @@ const AdminReservations = () => {
     }
   };
 
+  // Trinti rezervacija per pagrindini admin puslapi
+  const handleDelete = async (reservationId) => {
+    if (window.confirm('Are you sure you want to delete this reservation?')) {
+      try {
+        const response = await fetch(`http://localhost:3000/reservations/${reservationId}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (response.ok) {
+          setReservations(reservations.filter((res) => res._id !== reservationId));
+          toast.success('Reservation deleted successfully');
+        }
+      } catch (error) {
+        toast.error('Failed to delete reservation');
+      }
+    }
+  };
+
   const handleRowClick = (reservation) => {
     setSelectedReservation(reservation);
   };
@@ -138,6 +159,17 @@ const AdminReservations = () => {
                           >
                             {reservation.status || 'Pending'}
                           </span>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(reservation._id);
+                            }}
+                            className="inline-flex items-center gap-2 bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transform transition-all duration-200"
+                          >
+                            Delete
+                          </button>
                         </td>
                       </tr>
                     ))}
