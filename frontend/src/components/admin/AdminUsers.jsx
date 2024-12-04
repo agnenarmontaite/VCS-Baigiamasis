@@ -9,7 +9,6 @@ const AdminUsers = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(12);
   const [showNewUserModal, setShowNewUserModal] = useState(false);
-  const [totalUsers, setTotalUsers] = useState(0);
 
   useEffect(() => {
     fetchUsers();
