@@ -23,9 +23,12 @@ function ReservationForm({ onSubmit }) {
   const [tools, setTools] = useState([]);
   const [fetchError, setFetchError] = useState(null);
   const [disabledDates, setDisabledDates] = useState([]);
+  const [basePrice, setBasePrice] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
   const today = new Date();
   const phoneRegex = /^\+?[1-9]\d{1,14}$/;
-    const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     toolType: '',
     tool: '',
     toolName: '',
@@ -125,6 +128,25 @@ function ReservationForm({ onSubmit }) {
     }
   };
 
+  useEffect(() => {
+    if (formData.tool) {
+      fetch(`http://localhost:3000/tools/${formData.tool}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setBasePrice(data.product.description.basePrice);
+          calculateTotalPrice(data.product.description.basePrice, formData.quantity);
+        });
+    }
+  }, [formData.tool]);
+
+  useEffect(() => {
+    if (basePrice && formData.quantity && formData.startDate && formData.endDate) {
+      const days = Math.ceil((new Date(formData.endDate) - new Date(formData.startDate)) / (1000 * 60 * 60 * 24));
+      const total = basePrice * formData.quantity * (days + 1);
+      setTotalPrice(total);
+    }
+  }, [basePrice, formData.quantity, formData.startDate, formData.endDate]);
+
   const validatePhone = (phoneNumber) => {
     return phoneRegex.test(phoneNumber);
   };
@@ -133,9 +155,9 @@ function ReservationForm({ onSubmit }) {
     return <Navigate to="/login" />;
   }
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     if (name === 'tool') {
       const selectedTool = tools.find((tool) => tool._id === value);
       setFormData((prev) => ({
@@ -144,6 +166,12 @@ function ReservationForm({ onSubmit }) {
         toolName: selectedTool ? selectedTool.name : '',
         toolType: selectedTool ? selectedTool.toolType : prev.toolType
       }));
+
+      // Calculate price when tool is selected
+      if (selectedTool && selectedTool.description?.basePrice) {
+        setBasePrice(selectedTool.description.basePrice);
+        calculateTotalPrice(selectedTool.description.basePrice, formData.quantity);
+      }
     } else {
       setFormData((prev) => ({
         ...prev,
@@ -153,6 +181,11 @@ function ReservationForm({ onSubmit }) {
 
       if (name === 'toolType') {
         setTools(categories[value] || []);
+      }
+
+      // Calculate price when quantity changes
+      if (name === 'quantity' && basePrice) {
+        calculateTotalPrice(basePrice, value);
       }
     }
   };
@@ -231,186 +264,194 @@ function ReservationForm({ onSubmit }) {
     }
   };
 
+  const calculateTotalPrice = (price, qty) => {
+    const days = formData.startDate && formData.endDate ? Math.ceil((new Date(formData.endDate) - new Date(formData.startDate)) / (1000 * 60 * 60 * 24)) : 1;
+    setTotalPrice(price * qty * days);
+  };
+
   return (
-    <div className="max-w-2xl mx-auto p-4 bg-white shadow-2xl rounded-xl border-2 border-red500">
-      <h2 className="text-2xl font-bold mb-4 flex items-center text-black">Tool Reservation</h2>
-      {isLoading ? (
-        <div className="flex justify-center">
-          <PulseLoader color="#000000" size={15} />
-        </div>
-      ) : fetchError ? (
-        <p className="text-red-500">{fetchError}</p>
-      ) : (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block mb-1 font-bold text-black">Select Category</label>
-            <select
-              name="toolType"
-              value={formData.toolType}
-              onChange={handleChange}
-              className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black"
-              required
-              onInvalid={(e) => e.target.setCustomValidity('Please select a category from the list')}
-              onInput={(e) => e.target.setCustomValidity('')}
-            >
-              <option value="" className="text-gray-500">
-                Categories
-              </option>
-              {Object.keys(categories).map((type) => (
-                <option key={type} value={type} className="text-black">
-                  {type}
-                </option>
-              ))}
-            </select>
-          </div>
+    <div className="container mx-auto p-6 max-w-6xl">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        <h2 className="text-3xl font-bold p-6 border-b border-gray-200">Tool Reservation</h2>
 
-          <div>
-            <label className="block mb-1 font-bold text-black">Select Tool</label>
-            <select
-              name="tool"
-              value={formData.tool}
-              onChange={handleChange}
-              className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black disabled:opacity-50"
-              required
-              disabled={!formData.toolType}
-              onInvalid={(e) => e.target.setCustomValidity('Please select a tool from the list')}
-              onInput={(e) => e.target.setCustomValidity('')}
-            >
-              <option value="" className="text-gray-500">
-                Tools
-              </option>
-              {tools.map((tool) => (
-                <option key={tool._id} value={tool._id} className="text-black">
-                  {tool.name}
-                </option>
-              ))}
-            </select>
+        {isLoading ? (
+          <div className="flex justify-center p-6">
+            <PulseLoader color="#000000" size={15} />
           </div>
+        ) : fetchError ? (
+          <p className="text-red-500 p-6">{fetchError}</p>
+        ) : (
+          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            {/* First category tool quantity */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Select Category</label>
+                <select name="toolType" value={formData.toolType} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2" required>
+                  <option value="">Categories</option>
+                  {Object.keys(categories).map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-          <div>
-            <label className="block mb-1 font-bold text-black">Quantity</label>
-            <input type="number" name="quantity" value={formData.quantity} onChange={handleChange} min="1" className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required />
-          </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Select Tool</label>
+                <select name="tool" value={formData.tool} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 disabled:bg-gray-100" required disabled={!formData.toolType}>
+                  <option value="">Tools</option>
+                  {tools.map((tool) => (
+                    <option key={tool._id} value={tool._id}>
+                      {tool.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-          <div>
-            <label className="block mb-1 font-bold text-black">Pickup Location</label>
-            <select name="pickupLocation" value={formData.pickupLocation} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1  text-black" required>
-              <option value="" className="text-gray-500">
-                Locations
-              </option>
-              {pickupLocations.map((location) => (
-                <option key={location} value={location} className="text-black">
-                  {location}
-                </option>
-              ))}
-            </select>
-          </div>
-              {formData.pickupLocation && (
-            <div>
-              <Map
-                className="size-fit aspect-auto"
-                data={data_send}
-                pickupAddress={setPickupAddress}
-                current_location={formData.pickupLocation}
-              />
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Quantity</label>
+                <input type="number" name="quantity" value={formData.quantity} onChange={handleChange} min="1" className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2" required />
+              </div>
             </div>
-              )}
-          {/* 
-          <div>
-            <Map className="size-fit aspect-auto" data={data_send} getAddress={getAddress} current_location={formData.pickupLocation} />
-          </div> */}
-          <div className="grid md:grid-cols-1 gap-3">
-            <p className="font-bold">Reservation date </p>
-            {formError && <span className="text-red-500">{formError}</span>}
-            <Datepicker
-              primaryColor={'blue'}
-              value={{ startDate: formData.startDate, endDate: formData.endDate }}
-              onChange={handleDateChange}
-              showShortcuts={true}
-              placeholder="Select your date"
-              showFooter={true}
-              containerClassName="rounded-lg border-2 border-black relative z-10"
-              disabledDates={disabledDates}
-              timezone="UTC"
-              startWeekOn="mon"
-              startFrom={new Date()}
-              configs={{
-                shortcuts: {
-                  today: {
-                    text: 'Today',
-                    period: {
-                      start: new Date(),
-                      end: new Date()
-                    }
-                  },
-                  tomorrow: {
-                    text: 'Tomorrow',
-                    period: {
-                      start: new Date(new Date().setDate(new Date().getDate() + 1)),
-                      end: new Date(new Date().setDate(new Date().getDate() + 1))
-                    }
-                  },
-                  next3Days: {
-                    text: 'Next 3 days',
-                    period: {
-                      start: new Date(),
-                      end: new Date(new Date().setDate(new Date().getDate() + 3))
-                    }
-                  },
-                  next5Days: {
-                    text: 'Next 5 days',
-                    period: {
-                      start: new Date(),
-                      end: new Date(new Date().setDate(new Date().getDate() + 5))
-                    }
-                  },
-                  next7Days: {
-                    text: 'Next 7 days',
-                    period: {
-                      start: new Date(),
-                      end: new Date(new Date().setDate(new Date().getDate() + 7))
-                    }
-                  },
-                  next14Days: {
-                    text: 'Next 14 days',
-                    period: {
-                      start: new Date(),
-                      end: new Date(new Date().setDate(new Date().getDate() + 14))
-                    }
-                  },
-                  next30days: {
-                    text: 'Next 30 days',
-                    period: {
-                      start: new Date(),
-                      end: new Date(new Date().setDate(new Date().getDate() + 30))
-                    }
-                  }
-                }
-              }}
-            />
-          </div>
+            {/* Second name email phone */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Contact Name</label>
+                <input type="text" name="contactName" value={formData.contactName} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2" required />
+              </div>
 
-          <div className="grid md:grid-cols-2 gap-3">
-            <div>
-              <label className="block mb-1 text-black">Contact Name</label>
-              <input type="text" name="contactName" value={formData.contactName} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required />
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Contact Email</label>
+                <input type="email" name="contactEmail" value={formData.contactEmail} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2" required />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">Contact Phone</label>
+                <input type="tel" name="contactPhone" value={formData.contactPhone} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2" required />
+              </div>
             </div>
-            <div>
-              <label className="block mb-1 text-black">Contact Email</label>
-              <input type="email" name="contactEmail" value={formData.contactEmail} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required />
+            {/* Third date location */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2 z-50">
+                <label className="block text-sm font-semibold text-gray-900">Reservation Date</label>
+                {formError && <span className="text-red-500">{formError}</span>}
+                <Datepicker
+                  primaryColor={'blue'}
+                  value={{ startDate: formData.startDate, endDate: formData.endDate }}
+                  onChange={handleDateChange}
+                  showShortcuts={true}
+                  placeholder="Select your date"
+                  showFooter={true}
+                  containerClassName="rounded-lg border-2 border-black relative z-10"
+                  disabledDates={disabledDates}
+                  timezone="UTC"
+                  startWeekOn="mon"
+                  startFrom={new Date()}
+                  configs={{
+                    shortcuts: {
+                      today: {
+                        text: 'Today',
+                        period: {
+                          start: new Date(),
+                          end: new Date()
+                        }
+                      },
+                      tomorrow: {
+                        text: 'Tomorrow',
+                        period: {
+                          start: new Date(new Date().setDate(new Date().getDate() + 1)),
+                          end: new Date(new Date().setDate(new Date().getDate() + 1))
+                        }
+                      },
+                      next3Days: {
+                        text: 'Next 3 days',
+                        period: {
+                          start: new Date(),
+                          end: new Date(new Date().setDate(new Date().getDate() + 3))
+                        }
+                      },
+                      next5Days: {
+                        text: 'Next 5 days',
+                        period: {
+                          start: new Date(),
+                          end: new Date(new Date().setDate(new Date().getDate() + 5))
+                        }
+                      },
+                      next7Days: {
+                        text: 'Next 7 days',
+                        period: {
+                          start: new Date(),
+                          end: new Date(new Date().setDate(new Date().getDate() + 7))
+                        }
+                      },
+                      next14Days: {
+                        text: 'Next 14 days',
+                        period: {
+                          start: new Date(),
+                          end: new Date(new Date().setDate(new Date().getDate() + 14))
+                        }
+                      },
+                      next30days: {
+                        text: 'Next 30 days',
+                        period: {
+                          start: new Date(),
+                          end: new Date(new Date().setDate(new Date().getDate() + 30))
+                        }
+                      }
+                    }
+                  }}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-900">Pickup Location</label>
+                <select name="pickupLocation" value={formData.pickupLocation} onChange={handleChange} className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2" required>
+                  <option value="">Locations</option>
+                  {pickupLocations.map((location) => (
+                    <option key={location} value={location}>
+                      {location}
+                    </option>
+                  ))}
+                </select>
+
+                {formData.pickupLocation && (
+                  <div className="mt-4">
+                    <Map className="w-full rounded-lg border border-gray-300" data={data_send} pickupAddress={setPickupAddress} current_location={formData.pickupLocation} />
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
 
-          <div>
-            <label className="block mb-1 text-black">Contact Phone</label>
-            <input type="tel" name="contactPhone" value={formData.contactPhone} onChange={handleChange} className="w-full p-2 border-2 border-red500 rounded-lg focus:outline-none focus:ring-1 focus:ring-red500 text-black" required />
-          </div>
+            <div className="mt-6 space-y-4">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <p className="text-sm font-semibold text-gray-900">Base Price</p>
+                  <p className="text-xl font-bold">€{basePrice} / day</p>
+                </div>
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <p className="text-sm font-semibold text-gray-900">Total Price</p>
+                  <p className="text-xl font-bold">€{totalPrice}</p>
+                </div>
+              </div>
 
-          <button type="submit" className="w-full bg-black text-white p-4 rounded-lg hover:bg-red-600 transition duration-300 transform hover:shadow-lg flex items-center justify-center" disabled={loading}>
-            {loading ? <PulseLoader color="#ffffff" size={15} /> : 'Make a Reservation'}
-          </button>
-        </form>
-      )}
+              <div className="flex items-center space-x-2">
+                <input type="checkbox" id="terms" checked={agreeToTerms} onChange={(e) => setAgreeToTerms(e.target.checked)} className="h-4 w-4 text-red-500 rounded border-gray-300" required />
+                <label htmlFor="terms" className="text-sm text-gray-700">
+                  I agree to the terms and conditions
+                </label>
+              </div>
+            </div>
+
+            {/*
+          <div>
+            <Map className="size-fit aspect-auto" data={data_send} getAddress={getAddress} current_location={formData.pickupLocation} />
+          </div> */}
+            <button type="submit" className="w-full bg-red-500 text-white p-4 rounded-lg hover:bg-red-600 transition duration-300 flex items-center justify-center" disabled={loading}>
+              {loading ? <PulseLoader color="#ffffff" size={15} /> : 'Make a Reservation'}
+            </button>
+          </form>
+        )}
+      </div>
     </div>
   );
 }
