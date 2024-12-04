@@ -14,7 +14,10 @@ router.get('/', auth, async (req, res) => {
 
   try {
     // Suranda visas rezervacijas pagal userId
-    const reservations = await Reservation.find().populate('product', 'description nameRetail').select('product quantity dateRange toolType tool pickupLocation contactName contactEmail contactPhone status _id').exec();
+    const reservations = await Reservation.find()
+      .populate('product', 'description nameRetail')
+      .select('product quantity dateRange _id toolType tool status pickupLocation contactName contactEmail contactPhone')
+      .exec();
 
     // Grazina rezultata su rezervaciju sarasu
     res.status(200).json({
@@ -150,6 +153,24 @@ router.get('/user/:userId', async (req, res) => {
       .exec();
 
     res.status(200).json(reservations);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Gaunam rezervacijas pagal specifini productId
+router.get('/product/:productId', async (req, res) => {
+  try {
+    const reservations = await Reservation.find({ product: req.params.productId })
+      .select('dateRange')
+      .exec();
+
+    res.status(200).json({
+      reservations: reservations.map((reservation) => ({
+        from: reservation.dateRange.from,
+        to: reservation.dateRange.to
+      }))
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

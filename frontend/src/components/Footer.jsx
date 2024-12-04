@@ -34,6 +34,9 @@ const Footer = () => {
                     </div>
                 </div>
             </div>
+            <div className="bg-gray-200">
+                <p className="pl-[40px] pb-2 text-[12px]">Copyright &copy; {new Date().getFullYear()} VCS Baigiamasis</p>
+            </div>
         </footer>
     );
 }
