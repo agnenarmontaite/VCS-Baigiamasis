@@ -1,6 +1,6 @@
 describe("checks header functions and rendering", () => {
   beforeEach(() => {
-    cy.viewport(1280, 720);
+    cy.viewport(1440, 1080);
     cy.visit("http://localhost:5173/");
   });
   it("checks navbar link home", () => {

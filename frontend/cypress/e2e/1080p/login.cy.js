@@ -4,7 +4,8 @@ describe("checks login function and home page rendering", () => {
     cy.visit("http://localhost:5173/");
   });
   it("looks for login, tries to navigate to login page", () => {
-    cy.get("div.auth-links i.bi-person")
+    cy.get("header nav div")
+    .find("a[href='/login']")
       .click()
       .get("form label")
       .should("exist")
@@ -12,12 +13,13 @@ describe("checks login function and home page rendering", () => {
       .should("contain.text", "Password");
   });
   it("tries to log in, checks home page for relevan navbar changes", () => {
-    cy.get("div.auth-links i.bi-person")
+    cy.get("header nav div")
+    .find("a[href='/login']")
       .click()
       .get("form")
       .find("input[type='email']")
       .should("exist")
-      .type("adis@adonis.com")
+      .type("adis@adonis2.com")
       .get("form")
       .find("input[type='password']")
       .should("exist")
@@ -25,7 +27,7 @@ describe("checks login function and home page rendering", () => {
       .get("form")
       .find("button")
       .click()
-      .get("div.auth-links span")
-      .should("contain.text", "Welcome, adis adonis!");
+      .get("header nav div span")
+      .should("contain.text", "Welcome, Adis!");
   });
 });
