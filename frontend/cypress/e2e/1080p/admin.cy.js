@@ -143,7 +143,7 @@ describe("checks tool reservation path", () => {
       .type("cypress test")
       .get("form")
       .find('input[name="email"]')
-      .type("cypress@test.com")
+      .type("cypress2@test.com")
       .get("form")
       .find('input[name="password"]')
       .type("test123")
