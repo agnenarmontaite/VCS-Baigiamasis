@@ -22,7 +22,8 @@ const AdminUsers = () => {
         }
       });
       const data = await response.json();
-      setUsers(data);
+      const sortedUsers = data.sort((a, b) => b._id.localeCompare(a._id));
+      setUsers(sortedUsers);
       setLoading(false);
     } catch (error) {
       toast.error('Failed to fetch users');

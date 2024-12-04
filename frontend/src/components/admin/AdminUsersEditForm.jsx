@@ -54,7 +54,8 @@ const AdminUsersEditForm = () => {
         }
       });
       const data = await response.json();
-      setUserReservations(Array.isArray(data) ? data : []);
+      const sortedReservations = Array.isArray(data) ? data.sort((a, b) => b._id.localeCompare(a._id)) : [];
+      setUserReservations(sortedReservations);
     } catch (error) {
       toast.error('Failed to fetch reservations');
       setUserReservations([]);
