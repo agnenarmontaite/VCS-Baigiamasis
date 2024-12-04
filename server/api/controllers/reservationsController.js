@@ -140,7 +140,7 @@ export const produceReservation = async (req, res) => {
             }
           } // Push nauja irankio rezervacija tools sekcijoje
         }
-      }
+      },
       { new: true } // Grazina atnaujinta user objekta
     );
 
@@ -176,7 +176,7 @@ export const eradicateReservation = async (req, res) => {
       message: 'Reservation deleted',
       request: {
         type: 'DELETE',
-        url: 'http://localhost:3000/reservations', {
+        url: 'http://localhost:3000/reservations',
         body: { productId: 'ID', quantity: 'Number' }
       }
     });
@@ -205,7 +205,7 @@ export const reformReservation = async (req, res) => {
     console.log('two', updatedReservation);
 
     res.status(200).json({
-      message: 'Reservation status updated successfully', {
+      message: 'Reservation status updated successfully',
       reservation: updatedReservation
     });
   } catch (err) {
