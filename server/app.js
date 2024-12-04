@@ -6,8 +6,9 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import toolsRoutes from './api/routes/product.js';
 import reservationRoutes from './api/routes/reservations.js';
-import storesRoutes from './api/routes/stores.js'
-
+import storesRoutes from './api/routes/stores.js';
+// Netrinti
+import contactRouter from './api/routes/contact.js';
 import authRoutes from './api/routes/auth.js';
 import userRoutes from './api/routes/users.js';
 dotenv.config();
@@ -47,10 +48,11 @@ app.use((req, res, next) => {
 
 //routes
 
-app.use('/tools', toolsRoutes)
-app.use('/reservations', reservationRoutes)
-app.use('/stores', storesRoutes)
-
+app.use('/tools', toolsRoutes);
+app.use('/reservations', reservationRoutes);
+app.use('/stores', storesRoutes);
+// Netrinti
+app.use('/contact', contactRouter);
 
 app.use((req, res, next) => {
   const error = new Error('Not found');
