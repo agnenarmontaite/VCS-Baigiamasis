@@ -107,6 +107,7 @@ const AdminReservations = () => {
                   <thead>
                     <tr className="bg-gray-50 border-b border-gray-200">
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Tool</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Contact Name</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Start Date</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">End Date</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Quantity</th>
@@ -117,6 +118,7 @@ const AdminReservations = () => {
                     {currentReservations.map((reservation) => (
                       <tr key={reservation._id} className="hover:bg-gray-50 transition-colors duration-200" onClick={() => handleRowClick(reservation)}>
                         <td className="px-6 py-4 text-sm text-gray-900">{reservation.tool}</td>
+                        <td className="px-6 py-4 text-sm text-gray-900">{reservation.contactName}</td>
                         <td className="px-6 py-4 text-sm text-gray-900">{new Date(reservation.dateRange.from).toLocaleDateString()}</td>
                         <td className="px-6 py-4 text-sm text-gray-900">{new Date(reservation.dateRange.to).toLocaleDateString()}</td>
                         <td className="px-6 py-4 text-sm text-gray-900">{reservation.quantity}</td>
