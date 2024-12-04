@@ -34,7 +34,8 @@ const AdminReservations = () => {
         })
       );
 
-      setReservations(updatedReservations);
+      const sortedReservations = updatedReservations.sort((a, b) => b._id.localeCompare(a._id));
+      setReservations(sortedReservations);
       setLoading(false);
     } catch (error) {
       toast.error('Failed to fetch reservations');
