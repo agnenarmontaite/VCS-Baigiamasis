@@ -109,6 +109,7 @@ const AdminReservations = () => {
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Tool</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Start Date</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">End Date</th>
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Quantity</th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Status</th>
                     </tr>
                   </thead>
@@ -118,6 +119,7 @@ const AdminReservations = () => {
                         <td className="px-6 py-4 text-sm text-gray-900">{reservation.tool}</td>
                         <td className="px-6 py-4 text-sm text-gray-900">{new Date(reservation.dateRange.from).toLocaleDateString()}</td>
                         <td className="px-6 py-4 text-sm text-gray-900">{new Date(reservation.dateRange.to).toLocaleDateString()}</td>
+                        <td className="px-6 py-4 text-sm text-gray-900">{reservation.quantity}</td>
                         <td className="px-6 py-4">
                           <span
                             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
