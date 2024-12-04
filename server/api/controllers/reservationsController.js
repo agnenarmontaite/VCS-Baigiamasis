@@ -32,9 +32,9 @@ export const procureReservations = async (req, res) => {
         status: reservation.status,
         request: {
           type: 'GET',
-          url: `http://localhost:3000/reservations/${reservation._id}`,
-        },
-      })),
+          url: `http://localhost:3000/reservations/${reservation._id}`
+        }
+      }))
     });
   } catch (err) {
     // Klaida grazina 500 statusa
@@ -50,7 +50,7 @@ export const procureReservation = async (req, res) => {
       return res.status(404).json({ message: 'Reservation not found' });
     }
     res.status(200).json({
-      reservation: reservation,
+      reservation: reservation
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -60,7 +60,7 @@ export const procureUserReservations = async (req, res) => {
   try {
     const reservations = await Reservation.find({
       userId: req.params.userId,
-      // Removed the status filter to get all reservations
+      status: { $in: ['Pending', 'Active'] } // Only get active and pending reservations
     })
       .populate('product', 'description.nameRetail')
       .exec();
@@ -74,22 +74,13 @@ export const procureUserReservations = async (req, res) => {
 export const produceReservation = async (req, res) => {
   // Is request paimamas productId, quantity ir dateRange
   const { userId } = req.userData;
-  const {
-    productId,
-    toolType,
-    tool,
-    quantity,
-    dateRange,
-    pickupLocation,
-    contactName,
-    contactEmail,
-    contactPhone,
-  } = req.body;
+
+  const { productId, toolType, tool, quantity, dateRange, pickupLocation, contactName, contactEmail, contactPhone } = req.body;
 
   // Patikrina ar dateRange teisingai ivestas
   if (!dateRange || !dateRange.from || !dateRange.to) {
     return res.status(400).json({
-      message: 'Invalid date range',
+      message: 'Invalid date range'
     });
   }
 
@@ -111,7 +102,7 @@ export const produceReservation = async (req, res) => {
       pickupLocation,
       contactName,
       contactEmail,
-      contactPhone,
+      contactPhone
     });
 
     // Sukuria nauja rezervacija
@@ -128,8 +119,8 @@ export const produceReservation = async (req, res) => {
       contactPhone,
       dateRange: {
         from: dateRange.from,
-        to: dateRange.to,
-      },
+        to: dateRange.to
+      }
     });
     console.log('Created reservation object:', reservation);
 
@@ -145,11 +136,11 @@ export const produceReservation = async (req, res) => {
             reservationId: savedReservation._id,
             dateRange: {
               startDate: dateRange.from,
-              endDate: dateRange.to,
-            },
-          }, // Push nauja irankio rezervacija tools sekcijoje
-        },
-      },
+              endDate: dateRange.to
+            }
+          } // Push nauja irankio rezervacija tools sekcijoje
+        }
+      }
       { new: true } // Grazina atnaujinta user objekta
     );
 
@@ -166,8 +157,8 @@ export const produceReservation = async (req, res) => {
       reservation: savedReservation,
       request: {
         type: 'POST',
-        url: `http://localhost:3000/reservations/${savedReservation._id}`,
-      },
+        url: `http://localhost:3000/reservations/${savedReservation._id}`
+      }
     });
   } catch (err) {
     // Grazina klaidos pranesima
@@ -185,9 +176,9 @@ export const eradicateReservation = async (req, res) => {
       message: 'Reservation deleted',
       request: {
         type: 'DELETE',
-        url: 'http://localhost:3000/reservations',
-        body: { productId: 'ID', quantity: 'Number' },
-      },
+        url: 'http://localhost:3000/reservations', {
+        body: { productId: 'ID', quantity: 'Number' }
+      }
     });
   } catch (err) {
     // Grazina klaidos pranesima
@@ -203,9 +194,7 @@ export const reformReservation = async (req, res) => {
     if (typeof updateOps === 'string') {
       return console.log('No data apart reservation status was used');
     } else {
-      await Reservation.findByIdAndUpdate({ _id: id }, updateOps, {
-        new: true,
-      });
+      await Reservation.findByIdAndUpdate({ _id: id }, updateOps, { new: true });
     }
     if (!reservation) {
       return res.status(404).json({ message: 'Reservation not found' });
@@ -216,8 +205,8 @@ export const reformReservation = async (req, res) => {
     console.log('two', updatedReservation);
 
     res.status(200).json({
-      message: 'Reservation status updated successfully',
-      reservation: updatedReservation,
+      message: 'Reservation status updated successfully', {
+      reservation: updatedReservation
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
