@@ -56,6 +56,7 @@ function ReservationList() {
                     <td className="px-6 py-4">
                       <div className="text-sm font-medium text-gray-900">{reservation.tool}</div>
                       <div className="text-sm text-gray-500">{reservation.toolType}</div>
+                      <div className="text-sm text-gray-500">Quantity: {reservation.quantity}</div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm text-gray-900">From: {new Date(reservation.dateRange.from).toLocaleDateString()}</div>
