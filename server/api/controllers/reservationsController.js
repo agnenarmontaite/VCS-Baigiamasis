@@ -41,28 +41,19 @@ export const procureReservations = async (req, res) => {
   }
   export const procureReservation = async (req, res) => {
     try {
-      // Suranda rezervacija pagal id
-      const reservation = await Reservation.findOne({
-        _id: req.params.reservationId,
-        userId: req.userData.userId
-      }).exec();
+      const reservation = await Reservation.findById(req.params.reservationId).populate('product', 'description nameRetail').exec();
+  
       if (!reservation) {
         return res.status(404).json({ message: 'Reservation not found' });
       }
   
-      // Grazina rezervacijos informacija
       res.status(200).json({
-        reservation: reservation,
-        request: {
-          type: 'UPDATE',
-          url: 'http://localhost:3000/reservations'
-        }
+        reservation: reservation
       });
     } catch (err) {
-      // Grazina klaidos pranesima
       res.status(500).json({ error: err.message });
     }
-  }
+  };
 export const procureUserReservations = async (req, res) => {
     try {
       const reservations = await Reservation.find({
