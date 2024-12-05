@@ -6,6 +6,7 @@ import { Navigate, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import Map from './Map';
 import { toast } from 'react-toastify';
+import { useMap } from 'react-leaflet';
 
 function ReservationForm({ onSubmit }) {
   const { user } = useContext(AuthContext);
@@ -35,7 +36,7 @@ function ReservationForm({ onSubmit }) {
     quantity: '',
     startDate: today,
     endDate: today,
-    pickupLocation: '',
+    pickupLocation: pickupAddress,
     contactName: user.name,
     contactEmail: user.email,
     contactPhone: user.phoneNumber
@@ -109,6 +110,25 @@ function ReservationForm({ onSubmit }) {
     }
   }, [formData.tool]);
 
+  useEffect(() => {
+    if (formData.tool) {
+      fetch(`http://localhost:3000/tools/${formData.tool}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setBasePrice(data.product.description.basePrice);
+          calculateTotalPrice(data.product.description.basePrice, formData.quantity);
+        });
+    }
+  }, [formData.tool]);
+
+  useEffect(() => {
+    if (basePrice && formData.quantity && formData.startDate && formData.endDate) {
+      const days = Math.ceil((new Date(formData.endDate) - new Date(formData.startDate)) / (1000 * 60 * 60 * 24));
+      const total = basePrice * formData.quantity * (days + 1);
+      setTotalPrice(total);
+    }
+  }, [basePrice, formData.quantity, formData.startDate, formData.endDate]);
+
   const fetchReservationsForTool = async (toolId) => {
     try {
       const response = await fetch(`http://localhost:3000/reservations/product/${toolId}`, {
@@ -131,25 +151,6 @@ function ReservationForm({ onSubmit }) {
       console.error('Error fetching reservations:', error);
     }
   };
-
-  useEffect(() => {
-    if (formData.tool) {
-      fetch(`http://localhost:3000/tools/${formData.tool}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setBasePrice(data.product.description.basePrice);
-          calculateTotalPrice(data.product.description.basePrice, formData.quantity);
-        });
-    }
-  }, [formData.tool]);
-
-  useEffect(() => {
-    if (basePrice && formData.quantity && formData.startDate && formData.endDate) {
-      const days = Math.ceil((new Date(formData.endDate) - new Date(formData.startDate)) / (1000 * 60 * 60 * 24));
-      const total = basePrice * formData.quantity * (days + 1);
-      setTotalPrice(total);
-    }
-  }, [basePrice, formData.quantity, formData.startDate, formData.endDate]);
 
   const validatePhone = (phoneNumber) => {
     return phoneRegex.test(phoneNumber);
@@ -225,6 +226,12 @@ function ReservationForm({ onSubmit }) {
 
     if (!formData.startDate || !formData.endDate) {
       setFormError('Please select a reservation date.');
+      setLoading(false);
+      return;
+    }
+
+    if (!pickupAddress) {
+      toast.error('Please select pick up store on the map.');
       setLoading(false);
       return;
     }
@@ -418,15 +425,13 @@ function ReservationForm({ onSubmit }) {
                     </option>
                   ))}
                 </select>
-
-                {formData.pickupLocation && (
+              </div>
+            </div>
+            {formData.pickupLocation && (
                   <div className="mt-4">
                     <Map className="w-full rounded-lg border border-gray-300" data={data_send} pickupAddress={setPickupAddress} current_location={formData.pickupLocation} />
                   </div>
                 )}
-              </div>
-            </div>
-
             {/* Fourth prices */}
             <div className="mt-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">

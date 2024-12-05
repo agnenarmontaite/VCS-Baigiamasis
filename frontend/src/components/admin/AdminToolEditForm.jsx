@@ -57,7 +57,7 @@ console.log(product)
   };
 
   useEffect(() => {
-    setItemEdit(product);
+    setItemEdit(product.tool);
   }, [product]);
 
   return (
