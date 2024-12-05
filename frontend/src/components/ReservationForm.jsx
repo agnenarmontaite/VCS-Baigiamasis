@@ -6,7 +6,6 @@ import { Navigate, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import Map from './Map';
 import { toast } from 'react-toastify';
-import { useMap } from 'react-leaflet';
 
 function ReservationForm({ onSubmit }) {
   const { user } = useContext(AuthContext);

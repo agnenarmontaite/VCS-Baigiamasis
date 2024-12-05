@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer, Marker, Popup} from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const Map = ({data, current_location, pickupAddress, map}) => {
   const [geolocation, setGeoLocation] = useState([]);
