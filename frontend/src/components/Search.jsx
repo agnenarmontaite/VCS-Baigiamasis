@@ -14,7 +14,6 @@ const Search = ({ searchCriteria, onSearch }) => {
                             placeholder="Search for equipment"
                             className="md:h-[70px] text-[20px] leading-[30px] w-full pl-[50px] pr-[40px] py-[10px] rounded-full md:rounded-[50px] md:border-[1px] shadow-md border-gray-300"
                         />
-                        <i className="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-[20px] text-gray-400"></i>
                         <button
                             type="button"
                             onClick={() => {
