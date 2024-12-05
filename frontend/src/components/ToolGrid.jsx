@@ -16,6 +16,10 @@ function ToolGrid({ searchCriteria = { searchText: '', category: '' }, limit = '
   const totalPages = Math.ceil((searchResults && isSearchActive ? searchResults : products).length / toolsPerPage);
 
   useEffect(() => {
+    setCurrentPage(1)
+  }, [searchCriteria])
+
+  useEffect(() => {
     fetch('http://localhost:3000/tools')
       .then((res) => {
         return res.json();
