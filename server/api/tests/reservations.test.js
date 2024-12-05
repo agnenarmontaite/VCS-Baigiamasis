@@ -160,15 +160,17 @@ describe('Reservations API Tests', () => {
       userId: 'mockUserId',
       dateRange: { from: '2024-01-01', to: '2024-01-10' },
     };
-    Reservation.findOne = vi.fn().mockImplementation(() => ({
-      exec: vi.fn().mockResolvedValue({
+    Reservation.findById = vi.fn().mockImplementation((id) => ({
+      populate: vi.fn().mockReturnThis(),
+      exec: vi.fn().mockResolvedValue(id === 'mockReservationId' ? {
         _id: 'mockReservationId',
         product: 'mockProductId',
         quantity: 1,
         userId: 'mockUserId',
         dateRange: { from: '2024-01-01', to: '2024-01-10' },
-      }),
+      } : null),
     }));
+    
     
     const res = await request(app)
       .get('/reservations/mockReservationId')
