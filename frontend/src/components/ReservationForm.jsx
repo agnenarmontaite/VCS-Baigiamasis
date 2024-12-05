@@ -35,7 +35,7 @@ function ReservationForm({ onSubmit }) {
     quantity: '',
     startDate: today,
     endDate: today,
-    pickupLocation: '',
+    pickupLocation: pickupAddress,
     contactName: user.name,
     contactEmail: user.email,
     contactPhone: user.phoneNumber
@@ -109,25 +109,6 @@ function ReservationForm({ onSubmit }) {
     }
   }, [formData.tool]);
 
-  const fetchReservationsForTool = async (toolId) => {
-    try {
-      const response = await fetch(`http://localhost:3000/reservations/product/${toolId}`);
-      const data = await response.json();
-
-      if (response.ok) {
-        const disabledDateRanges = data.reservations.map((reservation) => ({
-          startDate: new Date(reservation.from),
-          endDate: new Date(reservation.to)
-        }));
-        setDisabledDates(disabledDateRanges);
-      } else {
-        console.error('Error fetching reservations:', data.error);
-      }
-    } catch (error) {
-      console.error('Error fetching reservations:', error);
-    }
-  };
-
   useEffect(() => {
     if (formData.tool) {
       fetch(`http://localhost:3000/tools/${formData.tool}`)
@@ -146,6 +127,29 @@ function ReservationForm({ onSubmit }) {
       setTotalPrice(total);
     }
   }, [basePrice, formData.quantity, formData.startDate, formData.endDate]);
+
+  const fetchReservationsForTool = async (toolId) => {
+    try {
+      const response = await fetch(`http://localhost:3000/reservations/product/${toolId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        const disabledDateRanges = data.reservations.map((reservation) => ({
+          startDate: new Date(reservation.from),
+          endDate: new Date(reservation.to)
+        }));
+        setDisabledDates(disabledDateRanges);
+      } else {
+        console.error('Error fetching reservations:', data.error);
+      }
+    } catch (error) {
+      console.error('Error fetching reservations:', error);
+    }
+  };
 
   const validatePhone = (phoneNumber) => {
     return phoneRegex.test(phoneNumber);
@@ -221,6 +225,12 @@ function ReservationForm({ onSubmit }) {
 
     if (!formData.startDate || !formData.endDate) {
       setFormError('Please select a reservation date.');
+      setLoading(false);
+      return;
+    }
+
+    if (!pickupAddress) {
+      toast.error('Please select pick up store on the map.');
       setLoading(false);
       return;
     }
@@ -414,15 +424,13 @@ function ReservationForm({ onSubmit }) {
                     </option>
                   ))}
                 </select>
-
-                {formData.pickupLocation && (
+              </div>
+            </div>
+            {formData.pickupLocation && (
                   <div className="mt-4">
                     <Map className="w-full rounded-lg border border-gray-300" data={data_send} pickupAddress={setPickupAddress} current_location={formData.pickupLocation} />
                   </div>
                 )}
-              </div>
-            </div>
-
             {/* Fourth prices */}
             <div className="mt-6 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">

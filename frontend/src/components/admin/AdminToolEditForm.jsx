@@ -56,7 +56,7 @@ function AdminToolEditForm() {
   };
 
   useEffect(() => {
-    setItemEdit(product);
+    setItemEdit(product.tool);
   }, [product]);
 
   return (

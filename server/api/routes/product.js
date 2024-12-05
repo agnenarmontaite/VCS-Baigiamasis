@@ -8,10 +8,10 @@ router.get('/', controller.procureTools);
 
 router.get('/:id', controller.procureTool);
 
-router.post('/', controller.produceTool);
+router.post('/', auth, controller.produceTool);
 
-router.patch('/:id', controller.reformTool);
+router.patch('/:id', auth, adminAuth, controller.reformTool);
 
-router.delete('/:id', controller.eradicateTool);
+router.delete('/:id', auth, adminAuth, controller.eradicateTool);
 
 export default router;
