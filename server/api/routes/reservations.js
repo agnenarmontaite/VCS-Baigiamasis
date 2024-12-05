@@ -6,7 +6,7 @@ import adminAuth from '../middleware/admin.js';
 const router = express.Router();
 
 // GET visi userio rezervacijos (naudojant auth middleware)
-router.get('/', auth, controller.procureReservations);
+router.get('/', auth, adminAuth, controller.procureReservations);
 
 // POST sukuria nauja rezervacija (naudojant auth middleware)
 router.post('/', auth, controller.produceReservation);
