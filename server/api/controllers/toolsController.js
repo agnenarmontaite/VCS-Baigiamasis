@@ -15,6 +15,7 @@ export const procureTools = async (req, res, next) => {
             description: doc.description,
             images: doc.description.imageURIs,
             toolType: doc.toolType,
+            tool: doc
           };
         })
       };
