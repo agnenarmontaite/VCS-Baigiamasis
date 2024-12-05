@@ -34,7 +34,7 @@ const AdminUsers = () => {
   const handleDelete = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        const response = await fetch(`http://localhost:3000/api/reservations/users/${userId}`, {
+        const response = await fetch(`http://localhost:3000/api/users/${userId}`, {
           method: 'DELETE'
         });
         if (response.ok) {
